@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="600"
+		Width="1024" Height="600"
+        x:Class="Goweli.MainWindow"
+        Title="Goweli"
+		Icon="Assets/Images/Icon.png">
+	<Grid Background="{DynamicResource ResourceKey=PrimaryBackground}" ColumnDefinitions="Auto, *">
+		<Border Grid.Column="0" Padding="20"></Border>
+		<Grid RowDefinitions="*, Auto">
+			<StackPanel Grid.Row="0" Spacing="12">
+				<Image Source="/Assets/Images/Icon.png" Width="90"></Image>
+
+				<Button HorizontalAlignment="Stretch" Margin="10">
+					<StackPanel Orientation="Horizontal">
+						<Label Classes="icon" Content="&#xE758;"></Label>
+						<Label Content="VIEW BOOKS"></Label>
+						
+					</StackPanel>
+				</Button>
+				<Button HorizontalAlignment="Stretch" Margin="10">
+					<StackPanel Orientation="Horizontal">
+						<Label Classes="icon" Content="&#xE3D6;"></Label>
+						<Label Content="ADD A BOOK"></Label>
+						</StackPanel>
+					</Button>
+				<Button HorizontalAlignment="Stretch" Margin="10">
+					<StackPanel Orientation="Horizontal">
+						<Label Classes="icon" Content="&#xE30C;"></Label>
+						<Label Content="SEARCH"></Label>
+					</StackPanel>
+				</Button>
+			</StackPanel>
+		</Grid>
+	</Grid>
+</Window>

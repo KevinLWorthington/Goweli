@@ -46,8 +46,8 @@
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
-					<!-- Checked Out Column -->
-					<DataGridTemplateColumn Header="Checked Out">
+					<!-- Read Column -->
+					<DataGridTemplateColumn Header="Read?">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate x:DataType="models:Book">
 								<CheckBox IsChecked="{Binding IsChecked}" IsEnabled="False" />
@@ -56,7 +56,7 @@
 					</DataGridTemplateColumn>
 				</DataGrid.Columns>
 			</DataGrid>
-			<Button Content="Delete Selected Book" Command="{Binding DeleteCommand}" />
+			<Button Content="Delete Selected Book" HorizontalAlignment="{DynamicResource SubmitButton}" Command="{Binding DeleteCommand}" />
 		</StackPanel>
 	</Grid>
 </UserControl>

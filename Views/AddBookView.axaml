@@ -17,7 +17,7 @@
 		<TextBox Text="{Binding AuthorName, Mode=TwoWay}" Watermark="Author" Margin="10"/>
 		<StackPanel Orientation="Horizontal" Margin="10">
 			<TextBox Width="175" HorizontalAlignment="Left" Text="{Binding ISBN, Mode=TwoWay}" Watermark="ISBN"/>
-			<TextBlock FontSize="10" Text="Please enter numbers only or leave blank" VerticalAlignment="Center" Margin="5,0,0,0"/>
+			<TextBlock FontSize="10" Text="Can be blank if unknown" VerticalAlignment="Center" Margin="5,0,0,0"/>
 		</StackPanel>
 		<TextBox Text="{Binding Synopsis, Mode=TwoWay}" Watermark="Synopsis" Margin="10"/>
 		<CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" Content="Read?" Margin="10"/>

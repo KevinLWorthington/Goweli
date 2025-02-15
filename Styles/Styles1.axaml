@@ -5,22 +5,26 @@
       <!-- Add Controls for Previewer Here -->
     </Border>
   </Design.PreviewWith>
+	<!-- Sets the main font for text -->
 	<Style Selector="Window">
-		<Setter Property="FontFamily" Value="{DynamicResource ResourceKey=CreativeOld}"></Setter>
+		<Setter Property="FontFamily" Value="{DynamicResource ResourceKey=Akira}"></Setter>
 	</Style>
+	<!-- Sets the icon font for UI buttons -->
 	<Style Selector="Label.icon">
 		<Setter Property="FontFamily" Value="{DynamicResource ResourceKey=PhosphorFill}"></Setter>
+		<Setter Property="FontSize" Value="20"></Setter>
 		<Setter Property="Margin" Value="0, -2, 5, 0"></Setter>
 		<Setter Property="Foreground" Value="White"></Setter>
 	</Style>
+	<!-- Sets the button formatting -->
 <Style Selector="Button">
-	<Setter Property="FontSize" Value="20"></Setter>
+	<Setter Property="FontSize" Value="15"></Setter>
 	<Setter Property="Padding" Value="9,5.5,9.2,5.5"></Setter>
 	<Setter Property="Background" Value="#24424d"></Setter>
 	<Setter Property="Foreground" Value="#fcc203"></Setter>
-	<Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+	<Setter Property="HorizontalAlignment" Value="{DynamicResource ResourceKey=MainButton}"></Setter>
  </Style>
-
+	<!-- Sets the button animation -->
 	<Style Selector="Button Label">
 		<Setter Property="RenderTransform" Value="scale(1)"></Setter>
 		<Setter Property="Transitions">

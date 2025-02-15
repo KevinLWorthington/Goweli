@@ -1,6 +1,9 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Goweli.Data;
+using Goweli.ViewModels;
+using Goweli.Views;
 
 namespace Goweli
 {
@@ -13,9 +16,14 @@ namespace Goweli
 
         public override void OnFrameworkInitializationCompleted()
         {
+            using var db = new AppDbContext();
+
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow();
+                desktop.MainWindow = new MainView
+                {
+                    DataContext = new MainViewModel()
+                };
             }
 
             base.OnFrameworkInitializationCompleted();

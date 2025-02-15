@@ -4,28 +4,45 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="600"
 		Width="1024" Height="600"
-        x:Class="Goweli.MainWindow"
+		xmlns:vm="clr-namespace:Goweli.ViewModels"
+		xmlns:view="clr-namespace:Goweli.Views"
+        x:Class="Goweli.Views.MainView"
         Title="Goweli"
-		Icon="Assets/Images/Icon.png">
-	<Grid Background="{DynamicResource ResourceKey=PrimaryBackground}" ColumnDefinitions="Auto, *">
+		Icon="/Assets/Images/Icon.png"
+		x:DataType="vm:MainViewModel">
+
+	<!-- Define DataTemplates to map ViewModels to Views -->
+	<Window.DataTemplates>
+		<DataTemplate DataType="vm:HomeViewModel">
+			<view:HomeView />
+		</DataTemplate>
+		<DataTemplate DataType="vm:AddBookViewModel">
+			<view:AddBookView />
+		</DataTemplate>
+		<!-- Add DataTemplates for other ViewModels as needed -->
+	</Window.DataTemplates>
+
+	<Design.DataContext><vm:MainViewModel/></Design.DataContext>
+	<!-- Background set from App.axaml and setting up the application grid -->
+		<Grid Background="{DynamicResource ResourceKey=PrimaryBackground}" ColumnDefinitions="Auto, *">
+		<ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}"/>
 		<Border Grid.Column="0" Padding="20"></Border>
 		<Grid RowDefinitions="*, Auto">
 			<StackPanel Grid.Row="0" Spacing="12">
 				<Image Source="/Assets/Images/Icon.png" Width="90"></Image>
-
+	<!-- Left side menu buttons -->
 				<Button HorizontalAlignment="Stretch" Margin="10">
 					<StackPanel Orientation="Horizontal">
 						<Label Classes="icon" Content="&#xE758;"></Label>
 						<Label Content="VIEW BOOKS"></Label>
-						
 					</StackPanel>
 				</Button>
-				<Button HorizontalAlignment="Stretch" Margin="10">
+				<Button HorizontalAlignment="Stretch" Margin="10"  Command="{Binding AddBookViewCommand}">
 					<StackPanel Orientation="Horizontal">
 						<Label Classes="icon" Content="&#xE3D6;"></Label>
 						<Label Content="ADD A BOOK"></Label>
-						</StackPanel>
-					</Button>
+					</StackPanel>
+				</Button>
 				<Button HorizontalAlignment="Stretch" Margin="10">
 					<StackPanel Orientation="Horizontal">
 						<Label Classes="icon" Content="&#xE30C;"></Label>
@@ -34,5 +51,6 @@
 				</Button>
 			</StackPanel>
 		</Grid>
+			
 	</Grid>
 </Window>

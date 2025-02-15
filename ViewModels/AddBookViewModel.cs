@@ -15,7 +15,7 @@ namespace Goweli.ViewModels
 
         public AddBookViewModel(MainViewModel mainViewModel)
         {
-            _mainViewModel = mainViewModel;
+            _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
             SubmitCommand = new RelayCommand(OnSubmit);
         }
 
@@ -34,10 +34,10 @@ namespace Goweli.ViewModels
         [ObservableProperty]
         private bool _isChecked;
 
-        public AddBookViewModel()
+       /* public AddBookViewModel()
         {
             SubmitCommand = new RelayCommand(OnSubmit);
-        }
+        } */
 
         public RelayCommand SubmitCommand { get; }
 

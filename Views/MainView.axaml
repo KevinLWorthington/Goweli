@@ -11,6 +11,17 @@
 		Icon="/Assets/Images/Icon.png"
 		x:DataType="vm:MainViewModel">
 
+	<!-- Define DataTemplates to map ViewModels to Views -->
+	<Window.DataTemplates>
+		<DataTemplate DataType="vm:HomeViewModel">
+			<view:HomeView />
+		</DataTemplate>
+		<DataTemplate DataType="vm:AddBookViewModel">
+			<view:AddBookView />
+		</DataTemplate>
+		<!-- Add DataTemplates for other ViewModels as needed -->
+	</Window.DataTemplates>
+
 	<Design.DataContext><vm:MainViewModel/></Design.DataContext>
 	<!-- Background set from App.axaml and setting up the application grid -->
 		<Grid Background="{DynamicResource ResourceKey=PrimaryBackground}" ColumnDefinitions="Auto, *">

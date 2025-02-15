@@ -1,9 +1,63 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="Goweli.ViewBooks"
-        Title="ViewBooks">
-  Welcome to Avalonia!
-</Window>
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Goweli.ViewModels"
+             xmlns:models="clr-namespace:Goweli.Models"
+             mc:Ignorable="d"
+             x:Class="Goweli.Views.ViewBooksView"
+             x:DataType="vm:ViewBooksViewModel">
+	<Grid>
+		<StackPanel>
+			<DataGrid ItemsSource="{Binding Books}"
+                      AutoGenerateColumns="False"
+                      SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
+                      IsReadOnly="True">
+				<DataGrid.Columns>
+					<!-- Title Column -->
+					<DataGridTemplateColumn Header="Title">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate x:DataType="models:Book">
+								<TextBlock Text="{Binding BookTitle}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<!-- Author Column -->
+					<DataGridTemplateColumn Header="Author">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate x:DataType="models:Book">
+								<TextBlock Text="{Binding AuthorName}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<!-- ISBN Column -->
+					<DataGridTemplateColumn Header="ISBN">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate x:DataType="models:Book">
+								<TextBlock Text="{Binding ISBN}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<!-- Synopsis Column -->
+					<DataGridTemplateColumn Header="Synopsis">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate x:DataType="models:Book">
+								<TextBlock Text="{Binding Synopsis}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+					<!-- Checked Out Column -->
+					<DataGridTemplateColumn Header="Checked Out">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate x:DataType="models:Book">
+								<CheckBox IsChecked="{Binding IsChecked}" IsEnabled="False" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
+				</DataGrid.Columns>
+			</DataGrid>
+			<Button Content="Delete Selected Book" Command="{Binding DeleteCommand}" />
+		</StackPanel>
+	</Grid>
+</UserControl>
+

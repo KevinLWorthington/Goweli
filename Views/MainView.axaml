@@ -19,6 +19,9 @@
 		<DataTemplate DataType="vm:AddBookViewModel">
 			<view:AddBookView />
 		</DataTemplate>
+		<DataTemplate DataType="vm:ViewBooksViewModel">
+			<view:ViewBooksView />
+		</DataTemplate>
 		<!-- Add DataTemplates for other ViewModels as needed -->
 	</Window.DataTemplates>
 
@@ -31,7 +34,7 @@
 			<StackPanel Grid.Row="0" Spacing="12">
 				<Image Source="/Assets/Images/Icon.png" Width="90"></Image>
 	<!-- Left side menu buttons -->
-				<Button HorizontalAlignment="Stretch" Margin="10">
+				<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ViewBooksCommand}">
 					<StackPanel Orientation="Horizontal">
 						<Label Classes="icon" Content="&#xE758;"></Label>
 						<Label Content="VIEW BOOKS"></Label>

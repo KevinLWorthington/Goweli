@@ -16,11 +16,10 @@ namespace Goweli.ViewModels
         public MainViewModel()
         {
             AddBookViewCommand = new RelayCommand(ShowAddBookView);
-           // ViewBooksCommand = new RelayCommand(ShowViewBooks);
-           // SearchCommand = new RelayCommand(ShowSearchView); // If Search is implemented
+            ViewBooksCommand = new RelayCommand(ShowViewBooks);
+            // SearchCommand = new RelayCommand(ShowSearchView); // If Search is implemented
 
             // Set an initial view
-            // CurrentViewModel = new HomeViewModel();
             ShowDefaultView();
         }
         // Sets which view model should be shown
@@ -31,7 +30,7 @@ namespace Goweli.ViewModels
 
         private void ShowViewBooks()
         {
-            CurrentViewModel = new ViewBooksViewModel();
+            CurrentViewModel = new ViewBooksViewModel(this);
         }
 
         private void ShowSearchView()

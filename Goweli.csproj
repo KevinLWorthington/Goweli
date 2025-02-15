@@ -8,11 +8,16 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Assets\Fonts\Akira Expanded Demo.otf" />
+    <None Remove="Assets\Fonts\Anthrope.ttf" />
+    <None Remove="Assets\Fonts\Boldern.ttf" />
     <None Remove="Assets\Fonts\CreativeOld.otf" />
     <None Remove="Assets\Fonts\Phosphor-Fill.ttf" />
     <None Remove="Assets\Images\Icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Include="Assets\Fonts\Akira Expanded Demo.otf" />
+    <AvaloniaResource Include="Assets\Fonts\Boldern.ttf" />
     <AvaloniaResource Include="Assets\Fonts\CreativeOld.otf" />
     <AvaloniaResource Include="Assets\Fonts\Phosphor-Fill.ttf" />
     <AvaloniaResource Include="Assets\Images\Icon.png" />
@@ -28,5 +33,23 @@
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.1">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\SearchView.axaml.cs">
+      <DependentUpon>SearchView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\AddBookView.axaml.cs">
+      <DependentUpon>AddBookView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ViewBooksView.axaml.cs">
+      <DependentUpon>ViewBooksView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Goweli.Views.HomeView"
+             x:DataType="vm:HomeViewModel"
+             xmlns:vm="clr-namespace:Goweli.ViewModels">
+
+	<Design.DataContext>
+		<vm:HomeViewModel/>
+	</Design.DataContext>
+<!-- Main screen when loading the application or exiting another screen -->
+	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+		<TextBlock Text="Welcome to Goweli" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+		<TextBlock Text="Created by Kevin Worthington" FontSize="16" HorizontalAlignment="Center"/>
+	</StackPanel>
+</UserControl>

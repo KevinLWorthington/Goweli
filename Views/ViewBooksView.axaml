@@ -4,10 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Goweli.ViewModels"
              xmlns:models="clr-namespace:Goweli.Models"
+			 xmlns:conv="clr-namespace:Goweli.Converters"
              mc:Ignorable="d"
              x:Class="Goweli.Views.ViewBooksView"
              x:DataType="vm:ViewBooksViewModel">
 
+	<UserControl.Resources>
+	<conv:NullToBooleanConverter x:Key="NullToBooleanConverter" />
+</UserControl.Resources>
 	<!-- Sets up the table columns to show book information from the database-->
 	<ScrollViewer>
 		<Grid RowDefinitions="*, Auto" Margin="10">
@@ -63,11 +67,26 @@
 						</DataGridTemplateColumn>
 					</DataGrid.Columns>
 				</DataGrid>
+				
+				<Image Grid.Row="1"
+					   Source="{Binding SelectedBook.CoverUrl}"
+					   Width="200"
+					   Height="300"
+					   Stretch="Uniform"
+					   HorizontalAlignment="Center"
+					   Margin="0,10,0,10"
+					   IsVisible="{Binding SelectedBook.CoverUrl, Converter={StaticResource NullToBooleanConverter}}" />
 
 				<!-- Button for book deletion -->
+				<!--
 				<Button Content="Delete Book" HorizontalAlignment="{DynamicResource SubmitButton}" Command="{Binding DeleteCommand}" />
-
-			
+-->
+				<Button Grid.Row="2"
+						Content="Delete Book"
+						Command="{Binding DeleteCommand}"
+						IsEnabled="{Binding SelectedBook, Converter={StaticResource NullToBooleanConverter}}"
+						IsVisible="{Binding SelectedBook, Converter={StaticResource NullToBooleanConverter}}"
+						HorizontalAlignment="Center"/>
 			</StackPanel>
 		</Grid>
 	

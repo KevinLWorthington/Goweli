@@ -24,7 +24,7 @@
 	<Setter Property="Foreground" Value="#fcc203"></Setter>
 	<Setter Property="HorizontalAlignment" Value="{DynamicResource ResourceKey=MainButton}"></Setter>
  </Style>
-	<!-- Sets the button animation -->
+	<!-- Sets the button animation and text color -->
 	<Style Selector="Button Label">
 		<Setter Property="RenderTransform" Value="scale(1)"></Setter>
 		<Setter Property="Transitions">

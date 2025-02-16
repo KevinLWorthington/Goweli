@@ -5,7 +5,7 @@
 namespace Goweli.Migrations
 {
     /// <inheritdoc />
-    public partial class ISBNUpdate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,8 @@ namespace Goweli.Migrations
                     AuthorName = table.Column<string>(type: "TEXT", nullable: false),
                     ISBN = table.Column<string>(type: "TEXT", nullable: true),
                     Synopsis = table.Column<string>(type: "TEXT", nullable: true),
-                    IsChecked = table.Column<bool>(type: "INTEGER", nullable: false)
+                    IsChecked = table.Column<bool>(type: "INTEGER", nullable: false),
+                    CoverUrl = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -9,6 +9,7 @@
 
 	
 <!-- Book information input screen layout -->
+	<!--
 	<StackPanel Grid.Column="1">
 		<TextBlock Text="Add a New Book" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" />
 		<TextBox Text="{Binding BookTitle, Mode=TwoWay}" Watermark="Title" Margin="10"/>
@@ -20,6 +21,122 @@
 		<TextBox Text="{Binding Synopsis, Mode=TwoWay}" Watermark="Synopsis" Margin="10"/>
 		<CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" Content="Read?" Margin="10"/>
 		<Button Content="{Binding ButtonText}" HorizontalAlignment="{DynamicResource SubmitButton}" Command="{Binding SubmitCommand}" Margin="10"/>
-	</StackPanel>
+	</StackPanel> -->
+	<Grid RowDefinitions="Auto,*"
+          ColumnDefinitions="*,Auto,*"
+          Margin="20">
+
+		<!-- Main content area in the center column -->
+		<StackPanel Grid.Row="0"
+                    Grid.Column="1"
+                    Spacing="10">
+
+			<!-- Header -->
+			<TextBlock Text="Add a New Book"
+                     FontSize="24"
+                     FontWeight="Bold"
+                     HorizontalAlignment="Center"
+                     Margin="0,0,0,20"/>
+
+			<!-- Book Information Form -->
+			<TextBox Text="{Binding BookTitle}"
+                    Watermark="Title"
+                    Classes="clearButton"
+                    UseFloatingWatermark="True"/>
+
+			<TextBox Text="{Binding AuthorName}"
+                    Watermark="Author"
+                    Classes="clearButton"
+                    UseFloatingWatermark="True"/>
+
+			<!-- ISBN Section with helper text -->
+			<Grid ColumnDefinitions="*,Auto">
+				<TextBox Grid.Column="0"
+                        Text="{Binding ISBN}"
+                        Watermark="ISBN"
+                        Classes="clearButton"
+                        UseFloatingWatermark="True"
+                        Width="200"
+                        HorizontalAlignment="Left"/>
+				<TextBlock Grid.Column="1"
+                          Text="Optional"
+                          Opacity="0.6"
+                          VerticalAlignment="Center"
+                          Margin="10,0,0,0"/>
+			</Grid>
+
+			<!-- Synopsis with multi-line support -->
+			<TextBox Text="{Binding Synopsis}"
+                    Watermark="Synopsis"
+                    Classes="clearButton"
+                    UseFloatingWatermark="True"
+                    Height="100"
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"/>
+
+			<CheckBox IsChecked="{Binding IsChecked}"
+                     Content="Have you read this book?"/>
+
+			<!-- Cover Image Preview Section -->
+			<Border IsVisible="{Binding IsPreviewVisible}"
+                    BorderBrush="{DynamicResource SystemAccentColor}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="10"
+                    Margin="0,10">
+
+				<StackPanel Spacing="10">
+					<TextBlock Text="Cover Preview"
+                             FontWeight="Bold"
+                             HorizontalAlignment="Center"/>
+
+					<Image Source="{Binding PreviewCoverUrl}"
+                           Height="200"
+                           Stretch="Uniform"/>
+
+					<StackPanel Orientation="Horizontal"
+                              Spacing="10"
+                              HorizontalAlignment="Center">
+						<Button Command="{Binding AcceptCoverCommand}"
+                                Classes="accent"
+                                Content="Accept Cover"/>
+						<Button Command="{Binding RejectCoverCommand}"
+                                Classes="error"
+                                Content="Reject Cover"/>
+					</StackPanel>
+				</StackPanel>
+			</Border>
+
+			<!-- Submit Button -->
+			<Button Command="{Binding SubmitCommand}"
+                    Content="{Binding ButtonText}"
+                    Classes="accent"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    Margin="0,10"/>
+		</StackPanel>
+	</Grid>
+
+	<!-- Styles section for consistent UI elements -->
+	<UserControl.Styles>
+		<Style Selector="TextBox.clearButton">
+			<Setter Property="Margin" Value="0,5"/>
+			<Setter Property="CornerRadius" Value="4"/>
+		</Style>
+
+		<Style Selector="Button.accent">
+			<Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="Padding" Value="20,10"/>
+			<Setter Property="CornerRadius" Value="4"/>
+		</Style>
+
+		<Style Selector="Button.error">
+			<Setter Property="Background" Value="#E57373"/>
+			<Setter Property="Foreground" Value="White"/>
+			<Setter Property="Padding" Value="20,10"/>
+			<Setter Property="CornerRadius" Value="4"/>
+		</Style>
+	</UserControl.Styles>
 
 </UserControl>

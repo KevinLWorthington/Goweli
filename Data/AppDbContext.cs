@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Goweli.Models;
+﻿using Goweli.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace Goweli.Data

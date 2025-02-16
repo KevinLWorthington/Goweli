@@ -7,57 +7,66 @@
              mc:Ignorable="d"
              x:Class="Goweli.Views.ViewBooksView"
              x:DataType="vm:ViewBooksViewModel">
-	<Grid>
-		<StackPanel>
-			<DataGrid ItemsSource="{Binding Books}"
-                      AutoGenerateColumns="False"
-                      SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
-                      IsReadOnly="True">
-				<DataGrid.Columns>
-					<!-- Title Column -->
-					<DataGridTemplateColumn Header="Title">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate x:DataType="models:Book">
-								<TextBlock Text="{Binding BookTitle}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-					<!-- Author Column -->
-					<DataGridTemplateColumn Header="Author">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate x:DataType="models:Book">
-								<TextBlock Text="{Binding AuthorName}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-					<!-- ISBN Column -->
-					<DataGridTemplateColumn Header="ISBN">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate x:DataType="models:Book">
-								<TextBlock Text="{Binding ISBN}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-					<!-- Synopsis Column -->
-					<DataGridTemplateColumn Header="Synopsis">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate x:DataType="models:Book">
-								<TextBlock Text="{Binding Synopsis}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-					<!-- Read Column -->
-					<DataGridTemplateColumn Header="Read?">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate x:DataType="models:Book">
-								<CheckBox IsChecked="{Binding IsChecked}" IsEnabled="False" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-				</DataGrid.Columns>
-			</DataGrid>
-			<Button Content="Delete Selected Book" HorizontalAlignment="{DynamicResource SubmitButton}" Command="{Binding DeleteCommand}" />
-		</StackPanel>
-	</Grid>
+	<ScrollViewer>
+		<Grid RowDefinitions="*, Auto" Margin="10">
+			<StackPanel>
+				<DataGrid ItemsSource="{Binding Books}"
+						  AutoGenerateColumns="False"
+						  SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
+						  IsReadOnly="True"
+						  HorizontalAlignment="Stretch"
+						  VerticalAlignment="Stretch"
+						  CanUserReorderColumns="True"
+						  CanUserResizeColumns="True">
+					<DataGrid.Columns>
+						<!-- Title Column -->
+						<DataGridTemplateColumn Header="Title" SortMemberPath="BookTitle">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate x:DataType="models:Book">
+									<TextBlock Text="{Binding BookTitle}" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<!-- Author Column -->
+						<DataGridTemplateColumn Header="Author" SortMemberPath="AuthorName">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate x:DataType="models:Book">
+									<TextBlock Text="{Binding AuthorName}" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<!-- ISBN Column -->
+						<DataGridTemplateColumn Header="ISBN">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate x:DataType="models:Book">
+									<TextBlock Text="{Binding ISBN}" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<!-- Synopsis Column -->
+						<DataGridTemplateColumn Header="Synopsis">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate x:DataType="models:Book">
+									<TextBlock Text="{Binding Synopsis}" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<!-- Read Column -->
+						<DataGridTemplateColumn Header="Read" SortMemberPath="IsChecked">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate x:DataType="models:Book">
+									<TextBlock Text="{Binding IsChecked},Converter={StringConverters.IsNotNullOrEmpty}}" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+				<Button Content="Delete Book" HorizontalAlignment="{DynamicResource SubmitButton}" Command="{Binding DeleteCommand}" />
+
+			
+			</StackPanel>
+		</Grid>
+	
+	</ScrollViewer>
 </UserControl>
 

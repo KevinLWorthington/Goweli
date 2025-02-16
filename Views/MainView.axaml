@@ -22,18 +22,21 @@
 		<DataTemplate DataType="vm:ViewBooksViewModel">
 			<view:ViewBooksView />
 		</DataTemplate>
-		<!-- Add DataTemplates for other ViewModels as needed -->
+		<DataTemplate DataType="vm:ConfirmationDialogViewModel">
+			<view:ConfirmationDialog />
+		</DataTemplate>
 	</Window.DataTemplates>
 
-	<Design.DataContext><vm:MainViewModel/></Design.DataContext>
 	<!-- Background set from App.axaml and setting up the application grid -->
 		<Grid Background="{DynamicResource ResourceKey=PrimaryBackground}" ColumnDefinitions="Auto, *">
 		<ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}"/>
 		<Border Grid.Column="0" Padding="20"></Border>
 		<Grid RowDefinitions="*, Auto">
 			<StackPanel Grid.Row="0" Spacing="12">
+				<Button Command="{Binding ShowDefaultViewCommand}" Background="#00FFFFFF">
 				<Image Source="/Assets/Images/Icon.png" Width="90"></Image>
-	<!-- Left side menu buttons -->
+				</Button>
+	<!-- Side menu buttons and their command bindings -->
 				<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ViewBooksCommand}">
 					<StackPanel Orientation="Horizontal">
 						<Label Classes="icon" Content="&#xE758;"></Label>

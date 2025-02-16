@@ -49,6 +49,9 @@
     <Compile Update="Views\AddBookView.axaml.cs">
       <DependentUpon>AddBookView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ConfirmationDialog.axaml.cs">
+      <DependentUpon>ConfirmationDialog.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\ViewBooksView.axaml.cs">
       <DependentUpon>ViewBooksView.axaml</DependentUpon>
     </Compile>

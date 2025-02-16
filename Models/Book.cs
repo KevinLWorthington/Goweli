@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-// Book class to set up the properties of a book as entered by the user
+﻿// Book class to set up the properties of a book as entered by the user
 namespace Goweli.Models
 {
     public class Book
@@ -17,7 +11,7 @@ namespace Goweli.Models
 
         public string? ISBN { get; set; }
 
-        public string Synopsis { get; set; } = string.Empty;
+        public string? Synopsis { get; set; } = string.Empty;
 
         public bool IsChecked { get; set; }
     }

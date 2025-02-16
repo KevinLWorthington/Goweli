@@ -19,7 +19,7 @@ namespace Goweli.Migrations
                     BookTitle = table.Column<string>(type: "TEXT", nullable: false),
                     AuthorName = table.Column<string>(type: "TEXT", nullable: false),
                     ISBN = table.Column<string>(type: "TEXT", nullable: true),
-                    Synopsis = table.Column<string>(type: "TEXT", nullable: false),
+                    Synopsis = table.Column<string>(type: "TEXT", nullable: true),
                     IsChecked = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

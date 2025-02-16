@@ -7,9 +7,7 @@
              x:DataType="vm:AddBookViewModel"
              xmlns:vm="clr-namespace:Goweli.ViewModels">
 
-	<!--<Design.DataContext>
-		<vm:AddBookViewModel/>
-	</Design.DataContext> -->
+	
 <!-- Book information input screen layout -->
 	<StackPanel Grid.Column="1">
 		<TextBlock Text="Add a New Book" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" />

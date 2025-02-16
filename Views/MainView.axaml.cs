@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Goweli.ViewModels;
+using Goweli.Services;
 
 namespace Goweli.Views
 {
@@ -12,7 +13,7 @@ namespace Goweli.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
-            DataContext = new MainViewModel();
+            //DataContext = new MainViewModel();
         }
     }
 }

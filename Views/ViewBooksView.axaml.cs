@@ -1,12 +1,10 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
-namespace Goweli;
+namespace Goweli.Views;
 
-public partial class ViewBooks : Window
+public partial class ViewBooksView : UserControl
 {
-    public ViewBooks()
+    public ViewBooksView()
     {
         InitializeComponent();
     }

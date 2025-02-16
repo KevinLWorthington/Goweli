@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Goweli.Services;
 
 namespace Goweli.ViewModels
 {
@@ -12,16 +13,22 @@ namespace Goweli.ViewModels
         public RelayCommand AddBookViewCommand { get; }
         public RelayCommand ViewBooksCommand { get; }
         public RelayCommand SearchCommand { get; }
+        public RelayCommand ShowDefaultViewCommand { get; }
 
-        public MainViewModel()
+        private readonly IDialogService _dialogService;
+
+        public MainViewModel(IDialogService dialogService)
         {
+            _dialogService = dialogService;
+
             AddBookViewCommand = new RelayCommand(ShowAddBookView);
-           // ViewBooksCommand = new RelayCommand(ShowViewBooks);
-           // SearchCommand = new RelayCommand(ShowSearchView); // If Search is implemented
+            ViewBooksCommand = new RelayCommand(ShowViewBooks);
+            ShowDefaultViewCommand = new RelayCommand(ShowDefaultView);
+            // SearchCommand = new RelayCommand(ShowSearchView); // If Search is implemented
 
             // Set an initial view
-            // CurrentViewModel = new HomeViewModel();
             ShowDefaultView();
+
         }
         // Sets which view model should be shown
         private void ShowAddBookView()
@@ -31,7 +38,7 @@ namespace Goweli.ViewModels
 
         private void ShowViewBooks()
         {
-            CurrentViewModel = new ViewBooksViewModel();
+            CurrentViewModel = new ViewBooksViewModel(this, _dialogService);
         }
 
         private void ShowSearchView()

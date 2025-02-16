@@ -7,6 +7,8 @@
              mc:Ignorable="d"
              x:Class="Goweli.Views.ViewBooksView"
              x:DataType="vm:ViewBooksViewModel">
+
+	<!-- Sets up the table columns to show book information from the database-->
 	<ScrollViewer>
 		<Grid RowDefinitions="*, Auto" Margin="10">
 			<StackPanel>
@@ -61,6 +63,8 @@
 						</DataGridTemplateColumn>
 					</DataGrid.Columns>
 				</DataGrid>
+
+				<!-- Button for book deletion -->
 				<Button Content="Delete Book" HorizontalAlignment="{DynamicResource SubmitButton}" Command="{Binding DeleteCommand}" />
 
 			

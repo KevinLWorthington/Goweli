@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
+// Dialog service interface for the DialogService class
+
 namespace Goweli.Services
 {
     public interface IDialogService

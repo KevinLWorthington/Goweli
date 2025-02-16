@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 
+// Class to control dialog boxes for warnings and notifications
 namespace Goweli.Services
 {
     public class DialogService : IDialogService
     {
+
         public async Task<bool> ShowConfirmationDialog(string message, string title)
         {
             var buttons = new List<DialogButton>
@@ -20,6 +22,7 @@ namespace Goweli.Services
             return result.Result ?? false;
         }
 
+        // Show a dialog box with custom buttons
         public async Task<DialogResult> ShowDialog(string message, string title, IEnumerable<DialogButton> buttons)
         {
             var window = new Window

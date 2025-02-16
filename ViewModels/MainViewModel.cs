@@ -4,8 +4,13 @@ using Goweli.Services;
 
 namespace Goweli.ViewModels
 {
+
+    // Sets up commands for view switching
+
     public partial class MainViewModel : ViewModelBase
     {
+        // Current view model to be shown
+
         [ObservableProperty]
         private object _currentViewModel;
 
@@ -20,7 +25,7 @@ namespace Goweli.ViewModels
         public MainViewModel(IDialogService dialogService)
         {
             _dialogService = dialogService;
-
+            // Links commands to the view models
             AddBookViewCommand = new RelayCommand(ShowAddBookView);
             ViewBooksCommand = new RelayCommand(ShowViewBooks);
             ShowDefaultViewCommand = new RelayCommand(ShowDefaultView);

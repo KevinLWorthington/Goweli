@@ -10,15 +10,11 @@
   <ItemGroup>
     <None Remove="Assets\Fonts\Akira Expanded Demo.otf" />
     <None Remove="Assets\Fonts\Anthrope.ttf" />
-    <None Remove="Assets\Fonts\Boldern.ttf" />
-    <None Remove="Assets\Fonts\CreativeOld.otf" />
     <None Remove="Assets\Fonts\Phosphor-Fill.ttf" />
     <None Remove="Assets\Images\Icon.png" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\Fonts\Akira Expanded Demo.otf" />
-    <AvaloniaResource Include="Assets\Fonts\Boldern.ttf" />
-    <AvaloniaResource Include="Assets\Fonts\CreativeOld.otf" />
     <AvaloniaResource Include="Assets\Fonts\Phosphor-Fill.ttf" />
     <AvaloniaResource Include="Assets\Images\Icon.png" />
   </ItemGroup>

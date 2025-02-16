@@ -13,7 +13,6 @@ namespace Goweli.Views
 #if DEBUG
             this.AttachDevTools();
 #endif
-            //DataContext = new MainViewModel();
         }
     }
 }

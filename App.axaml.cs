@@ -21,11 +21,11 @@ namespace Goweli
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                IDialogService dialogService = new DialogService(); // Instantiate DialogService
+                IDialogService dialogService = new DialogService();
 
                 desktop.MainWindow = new MainView
                 {
-                    DataContext = new MainViewModel(dialogService) // Pass dialogService as argument
+                    DataContext = new MainViewModel(dialogService)
                 };
             }
 

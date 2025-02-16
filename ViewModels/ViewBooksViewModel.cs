@@ -7,6 +7,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
+// View model for viewing books stored in the database
+
 namespace Goweli.ViewModels
 {
     public partial class ViewBooksViewModel : ViewModelBase
@@ -14,12 +16,18 @@ namespace Goweli.ViewModels
         private readonly MainViewModel _mainViewModel;
         private readonly IDialogService _dialogService;
 
+        // Collection of books to be displayed
+
         public ObservableCollection<Book> Books { get; }
+        
+        // Allows selection of a book so the user can delete it
 
         [ObservableProperty]
         private Book? _selectedBook;
 
         public RelayCommand DeleteCommand { get; }
+
+        // Sets up and populates the books from the database and sets up the delete command
 
         public ViewBooksViewModel(MainViewModel mainViewModel, IDialogService dialogService)
         {
@@ -30,11 +38,11 @@ namespace Goweli.ViewModels
             var books = db.Books.ToList();
             Books = new ObservableCollection<Book>(books);
 
-            // DeleteCommand = new RelayCommand(DeleteSelectedBook, CanDeleteBook);
-
             DeleteCommand = new RelayCommand(async () => await DeleteSelectedBookAsync(), CanDeleteBook);
         }
 
+
+        
         partial void OnSelectedBookChanged(Book? value)
         {
             DeleteCommand.NotifyCanExecuteChanged();
@@ -45,20 +53,8 @@ namespace Goweli.ViewModels
             return SelectedBook != null;
         }
 
-        /* private void DeleteSelectedBook()
-         {
-             if (SelectedBook != null)
-             {
-                 using var db = new AppDbContext();
-                 var bookToDelete = db.Books.Find(SelectedBook.Id);
-                 if (bookToDelete != null)
-                 {
-                     db.Books.Remove(bookToDelete);
-                     db.SaveChanges();
-                     Books.Remove(SelectedBook);
-                 }
-             }
-         } */
+        // Prompts the user to confirm deletion of a book and deletes it if confirmed
+
         private async Task DeleteSelectedBookAsync()
         {
             if (SelectedBook != null)

@@ -19,7 +19,7 @@
 		</StackPanel>
 		<TextBox Text="{Binding Synopsis, Mode=TwoWay}" Watermark="Synopsis" Margin="10"/>
 		<CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" Content="Read?" Margin="10"/>
-		<Button Content="Submit" HorizontalAlignment="{DynamicResource SubmitButton}" Command="{Binding SubmitCommand}" Margin="10"/>
+		<Button Content="{Binding ButtonText}" HorizontalAlignment="{DynamicResource SubmitButton}" Command="{Binding SubmitCommand}" Margin="10"/>
 	</StackPanel>
 
 </UserControl>

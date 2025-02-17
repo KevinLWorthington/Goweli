@@ -90,7 +90,8 @@
                              FontWeight="Bold"
                              HorizontalAlignment="Center"/>
 
-					<Image Source="{Binding PreviewCoverUrl}"
+					<Image Source="{Binding PreviewCoverImage}"
+						   IsVisible="{Binding IsPreviewVisible}"
                            Height="200"
                            Stretch="Uniform"/>
 

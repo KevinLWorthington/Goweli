@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
+using System.Diagnostics;
 
 namespace Goweli.Data
 {
@@ -20,16 +21,16 @@ namespace Goweli.Data
             _dbPath = Path.Combine(projectRoot, "books.db");
 
             // Log the path we're using
-            Console.WriteLine($"Database path: {_dbPath}");
+            Debug.WriteLine($"Database path: {_dbPath}");
 
             // Check if the file exists
             if (File.Exists(_dbPath))
             {
-                Console.WriteLine("Database file exists");
+                Debug.WriteLine("Database file exists");
             }
             else
             {
-                Console.WriteLine("Database file does not exist at this location");
+                Debug.WriteLine("Database file does not exist at this location");
             }
 
             /* public DbSet<Book> Books { get; set; }
@@ -58,7 +59,7 @@ namespace Goweli.Data
             options.EnableDetailedErrors();
 
             // Log the connection string
-            Console.WriteLine($"Connection string: Data Source={_dbPath}");
+            Debug.WriteLine($"Connection string: Data Source={_dbPath}");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

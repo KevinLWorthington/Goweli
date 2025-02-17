@@ -14,6 +14,11 @@ using OpenLibraryNET;
 using OpenLibraryNET.Data;
 using OpenLibraryNET.Loader;
 using OpenLibraryNET.Utility;
+using System.Linq.Expressions;
+using System.Diagnostics;
+using Avalonia.Controls.Chrome;
+using Avalonia.Media.Imaging;
+using System.IO;
 
 namespace Goweli.ViewModels
 {
@@ -21,6 +26,7 @@ namespace Goweli.ViewModels
     // including fetching and validating cover images from the Open Library API
     public partial class AddBookViewModel : ViewModelBase
     {
+
         private readonly HttpClient _client;
         private readonly OpenLibraryClient _olClient;
 
@@ -48,14 +54,13 @@ namespace Goweli.ViewModels
         private bool _isChecked;
 
         [ObservableProperty]
-        private string? _coverUrl = string.Empty;
-
-        // Cover preview properties - these manage the cover image preview functionality
-        [ObservableProperty]
-        private string? _previewCoverUrl;
+        private Bitmap? _previewCoverImage;
 
         [ObservableProperty]
         private bool _isPreviewVisible;
+
+        [ObservableProperty]
+        private string? _previewCoverUrl;
 
         // UI state properties
         [ObservableProperty]
@@ -65,6 +70,23 @@ namespace Goweli.ViewModels
         public IAsyncRelayCommand SubmitCommand { get; }
         public IAsyncRelayCommand AcceptCoverCommand { get; }
         public IAsyncRelayCommand RejectCoverCommand { get; }
+
+        private async Task<Bitmap?> LoadImageFromUrl(string url)
+        {
+            try
+            {
+                using var httpClient = new HttpClient();
+                var imageBytes = await httpClient.GetByteArrayAsync(url);
+
+                using var memoryStream = new MemoryStream(imageBytes);
+                return new Bitmap(memoryStream);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading image: {ex.Message}");
+                return null;
+            }
+        }
 
         // Constructor initializes the view model and sets up commands
         public AddBookViewModel(MainViewModel mainViewModel)
@@ -84,24 +106,40 @@ namespace Goweli.ViewModels
         // Handles the book submission process
         private async Task OnSubmit()
         {
-            if (string.IsNullOrWhiteSpace(BookTitle) || string.IsNullOrWhiteSpace(AuthorName))
-            {
-                await _dialogService.ShowDialog(
-                    "Author and Title Required.",
-                    "ERROR",
-                    new List<DialogButton> { new("OK", false) });
-                return;
-            }
-
-            var coverUrl = await GetBookCoverUrlAsync(BookTitle);
-
-            if (coverUrl == null && !_continueWithNullCover)
-            {
-                return;
-            }
-
             try
             {
+                // Validate required fields
+                if (string.IsNullOrWhiteSpace(BookTitle) || string.IsNullOrWhiteSpace(AuthorName))
+                {
+                    await _dialogService.ShowDialog(
+                        "Author and Title Required.",
+                        "ERROR",
+                        new List<DialogButton> { new("OK", false) });
+                    return;
+                }
+
+                // Update UI to show we're searching
+                ButtonText = "Searching...";
+
+                // Try to get a cover image
+                var coverUrl = await GetBookCoverUrlAsync(BookTitle);
+
+                // Check if we should continue without a cover
+                if (coverUrl == null && !_continueWithNullCover)
+                {
+                    ButtonText = "Submit";
+                    return;
+                }
+
+                while (IsPreviewVisible)
+                {
+                    await Task.Delay(100);
+                }
+
+                // Update UI to show we're saving
+                ButtonText = "Adding Book...";
+
+                // Create and save the new book
                 var newBook = new Book
                 {
                     BookTitle = this.BookTitle,
@@ -109,19 +147,26 @@ namespace Goweli.ViewModels
                     ISBN = this.ISBN,
                     Synopsis = this.Synopsis,
                     IsChecked = this.IsChecked,
-                    CoverUrl = _validatedCoverUrl // Use the validated URL
+                    CoverUrl = _validatedCoverUrl
                 };
 
                 using var db = new AppDbContext();
                 db.Books.Add(newBook);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
 
+                // Show success and return to main view
                 ButtonText = "Book Added!";
                 await Task.Delay(2000);
                 _mainViewModel.ShowDefaultView();
             }
             catch (Exception ex)
             {
+                // Handle any errors that occur during submission
+                Debug.WriteLine($"Error in OnSubmit: {ex.Message}");
+                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+
+                ButtonText = "Submit";
+
                 string errorMessage = $"An error occurred while submitting the book: {ex.Message}";
                 if (ex.InnerException != null)
                 {
@@ -135,153 +180,99 @@ namespace Goweli.ViewModels
             }
         }
 
-        // Models for deserializing the Open Library API response
-        public class OpenLibrarySearchResult
-        {
-            [JsonPropertyName("docs")]
-            public List<OpenLibraryDoc>? Docs { get; set; }
 
-            [JsonPropertyName("numFound")]
-            public int NumFound { get; set; }
-        }
 
-        public class OpenLibraryDoc
-        {
-            [JsonPropertyName("cover_i")]
-            public int? CoverI { get; set; }
 
-            [JsonPropertyName("title")]
-            public string? Title { get; set; }
-
-            [JsonPropertyName("author_name")]
-            public List<string>? AuthorNames { get; set; }
-
-            [JsonPropertyName("isbn")]
-            public List<string>? ISBNs { get; set; }
-        }
 
         // Fetches and validates the book cover from the Open Library API
         private async Task<string?> GetBookCoverUrlAsync(string title)
         {
             try
             {
-                // Search for works matching the title
-                // We'll use the search functionality to find the work first
-                var workResults = await OLSearchLoader.GetSearchResultsAsync(
-                    _client,
-                    "",  // Empty query string because we're using parameters
-                    new KeyValuePair<string, string>("title", title),
+                using var httpClient = new HttpClient();
+                httpClient.Timeout = TimeSpan.FromSeconds(10);
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "Goweli Book Application/1.0");
+
+                Console.WriteLine($"Searching for book with title: {title}");
+
+                var searchResults = await OLSearchLoader.GetSearchResultsAsync(
+                    httpClient,
+                    title,
                     new KeyValuePair<string, string>("limit", "1")
                 );
 
-                if (workResults?.Length > 0)
+                if (searchResults == null || searchResults.Length == 0)
                 {
-                    // Get the first work's ID
-                    string workOLID = workResults[0].Key;
-
-                    // Get the first edition of this work
-                    var editions = await OLWorkLoader.GetEditionsAsync(
-                        _client,
-                        workOLID,
-                        new KeyValuePair<string, string>("limit", "1")
-                    );
-
-                    if (editions?.Length > 0)
-                    {
-                        var firstEdition = editions[0];
-
-                        // Try to get the cover image using the edition's OLID
-                        try
-                        {
-                            // Download the actual cover image bytes
-                            byte[] coverBytes = await OLImageLoader.GetCoverAsync(
-                                _client,
-                                CoverIdType.OLID,
-                                firstEdition.ID,
-                                ImageSize.Medium
-                            );
-
-                            // If we got here, the cover exists. Construct the URL for display
-                            var coverUrl = $"https://covers.openlibrary.org/b/olid/{firstEdition.ID}-M.jpg";
-
-                            PreviewCoverUrl = coverUrl;
-                            IsPreviewVisible = true;
-                            return coverUrl;
-                        }
-                        catch
-                        {
-                            // If getting the cover failed, we'll try using the work's cover as fallback
-                            try
-                            {
-                                byte[] workCoverBytes = await OLImageLoader.GetCoverAsync(
-                                    _client,
-                                    CoverIdType.OLID,
-                                    workOLID,
-                                    ImageSize.Medium
-                                );
-
-                                var coverUrl = $"https://covers.openlibrary.org/b/olid/{workOLID}-M.jpg";
-
-                                PreviewCoverUrl = coverUrl;
-                                IsPreviewVisible = true;
-                                return coverUrl;
-                            }
-                            catch
-                            {
-                                // Both attempts failed, proceed without cover
-                                _continueWithNullCover = true;
-                                return null;
-                            }
-                        }
-                    }
+                    Console.WriteLine("No works found for the given title");
+                    _continueWithNullCover = true;
+                    return null;
                 }
 
-                // If we couldn't find any editions or works, proceed without cover
+                var firstResult = searchResults[0];
+
+                if (firstResult.ExtensionData.TryGetValue("cover_edition_key", out var coverEditionKeyObj) &&
+                    coverEditionKeyObj != null)
+                {
+                    string coverEditionKey = coverEditionKeyObj.ToString();
+                    Console.WriteLine($"Found cover edition key: {coverEditionKey}");
+
+                    // Construct the URL for the cover
+                    var coverUrl = $"https://covers.openlibrary.org/b/olid/{coverEditionKey}-M.jpg";
+
+                    try
+                    {
+                        // Download and create the Bitmap for display
+                        var imageResponse = await httpClient.GetByteArrayAsync(coverUrl);
+                        using var memoryStream = new MemoryStream(imageResponse);
+
+                        // Set both the Bitmap for display and the URL for storage
+                        PreviewCoverImage = new Bitmap(memoryStream);
+                        PreviewCoverUrl = coverUrl;
+
+                        Console.WriteLine($"Successfully loaded cover image from: {coverUrl}");
+                        IsPreviewVisible = true;
+                        _validatedCoverUrl = coverUrl;
+                        return coverUrl;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Failed to load image: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No cover_edition_key found in search results");
+                }
+
+                Console.WriteLine("No valid cover found, continuing without cover");
                 _continueWithNullCover = true;
+                _validatedCoverUrl = null;
                 return null;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error fetching book cover: {ex.Message}");
+                Console.WriteLine($"Error in GetBookCoverUrlAsync: {ex.GetType().Name}");
+                Console.WriteLine($"Message: {ex.Message}");
+
                 _continueWithNullCover = true;
+                _validatedCoverUrl = null;
                 return null;
             }
-            finally
-            {
-                if (!(_validatedCoverUrl != null && _validatedCoverUrl == PreviewCoverUrl))
-                {
-                    IsPreviewVisible = false;
-                    PreviewCoverUrl = null;
-                }
-            }
         }
-
-        // Helper method to show the "continue without cover" dialog
-        /* private async Task<bool> ShowContinueWithoutCoverDialog(string message)
-         {
-             var result = await _dialogService.ShowDialog(
-                 $"{message}\nWould you like to continue without a cover image?",
-                 "Cover Image Issue",
-                 new List<DialogButton> {
-                     new("Continue without cover", true),
-                     new("Cancel submission", false)
-                 });
-
-             return result.Result ?? false;
-         } */
 
         // Handlers for cover validation commands
         private async Task OnAcceptCover()
         {
-            _validatedCoverUrl = PreviewCoverUrl;
             IsPreviewVisible = false;
+            Debug.WriteLine($"Cover accepted: {_validatedCoverUrl}");
         }
 
         private async Task OnRejectCover()
         {
             _validatedCoverUrl = null;
             IsPreviewVisible = false;
-            _continueWithNullCover = true; //await ShowContinueWithoutCoverDialog("Cover image rejected.");
+            PreviewCoverUrl = null;
+            _continueWithNullCover = true;
         }
     }
 }

@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Goweli.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250215210953_ISBNUpdate")]
-    partial class ISBNUpdate
+    [Migration("20250216183859_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.2");
 
             modelBuilder.Entity("Goweli.Models.Book", b =>
                 {
@@ -33,6 +33,9 @@ namespace Goweli.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("CoverUrl")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("ISBN")
                         .HasColumnType("TEXT");
 
@@ -40,7 +43,6 @@ namespace Goweli.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Synopsis")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

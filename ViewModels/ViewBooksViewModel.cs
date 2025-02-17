@@ -1,11 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Goweli.Data;
 using Goweli.Models;
 using Goweli.Services;
+using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
+using System.Net.Http;
+using System.Diagnostics;
 
 // View model for viewing books stored in the database
 
@@ -46,6 +53,15 @@ namespace Goweli.ViewModels
         partial void OnSelectedBookChanged(Book? value)
         {
             DeleteCommand.NotifyCanExecuteChanged();
+
+            if (value != null && !string.IsNullOrEmpty(value.CoverUrl))
+            {
+                _mainViewModel.LoadBookCover(value.CoverUrl);
+            }
+            else
+            {
+                _mainViewModel.ClearBookCover();
+            }
         }
 
         private bool CanDeleteBook()
@@ -76,5 +92,7 @@ namespace Goweli.ViewModels
                 }
             }
         }
+
+       
     }
 }

@@ -17,8 +17,8 @@ namespace Goweli.ViewModels
 
         public ConfirmationDialogViewModel()
         {
-            _message = string.Empty; // Initialize _message to a non-null value
-            _title = string.Empty; // Initialize _title to a non-null value
+            _message = string.Empty;
+            _title = string.Empty;
             YesCommand = new RelayCommand(OnYes);
             NoCommand = new RelayCommand(OnNo);
         }

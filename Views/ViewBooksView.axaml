@@ -67,15 +67,15 @@
 						</DataGridTemplateColumn>
 					</DataGrid.Columns>
 				</DataGrid>
-				
-				<Image Grid.Row="1"
+
+				<!--<Image Grid.Row="1"
 					   Source="{Binding CoverImage}"
 					   Width="200"
 					   Height="300"
 					   Stretch="Uniform"
 					   HorizontalAlignment="Center"
 					   Margin="0,10,0,10"
-					   IsVisible="{Binding IsCoverVisible}" />
+					   IsVisible="{Binding IsCoverVisible}" /> -->
 
 				<!-- Button for book deletion -->
 				<!--

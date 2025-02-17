@@ -32,14 +32,7 @@ namespace Goweli.ViewModels
         [ObservableProperty]
         private Book? _selectedBook;
 
-        [ObservableProperty]
-        private Bitmap? _coverImage;
-
-        [ObservableProperty]
-        private bool _isCoverVisible;
-
         public RelayCommand DeleteCommand { get; }
-        public RelayCommand<Book> BookDoubleClickCommand { get; }
 
         // Sets up and populates the books from the database and sets up the delete command
 
@@ -53,7 +46,6 @@ namespace Goweli.ViewModels
             Books = new ObservableCollection<Book>(books);
 
             DeleteCommand = new RelayCommand(async () => await DeleteSelectedBookAsync(), CanDeleteBook);
-            BookDoubleClickCommand = new RelayCommand<Book>(async (book) => await OnBookDoubleClickAsync(book));
         }
 
 
@@ -61,6 +53,15 @@ namespace Goweli.ViewModels
         partial void OnSelectedBookChanged(Book? value)
         {
             DeleteCommand.NotifyCanExecuteChanged();
+
+            if (value != null && !string.IsNullOrEmpty(value.CoverUrl))
+            {
+                _mainViewModel.LoadBookCover(value.CoverUrl);
+            }
+            else
+            {
+                _mainViewModel.ClearBookCover();
+            }
         }
 
         private bool CanDeleteBook()
@@ -91,35 +92,7 @@ namespace Goweli.ViewModels
                 }
             }
         }
-        private async Task OnBookDoubleClickAsync(Book book)
-        {
-            if (SelectedBook != null && !string.IsNullOrEmpty(book.CoverUrl))
-            {
-                CoverImage = await LoadImageFromUrl(book.CoverUrl);
-                IsCoverVisible = CoverImage != null;
-            }
-            else
-            {
-                IsCoverVisible = false;
-            }
-        }
 
-        // Loads an image from a URL
-        private async Task<Bitmap?> LoadImageFromUrl(string url)
-        {
-            try
-            {
-                using var httpClient = new HttpClient();
-                var imageBytes = await httpClient.GetByteArrayAsync(url);
-
-                using var memoryStream = new MemoryStream(imageBytes);
-                return new Bitmap(memoryStream);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error loading image: {ex.Message}");
-                return null;
-            }
-        }
+       
     }
 }

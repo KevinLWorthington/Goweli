@@ -1,6 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Media.Imaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Goweli.Services;
+using System.Diagnostics;
+using System;
+using System.IO;
+using System.Net.Http;
 
 namespace Goweli.ViewModels
 {
@@ -13,6 +18,12 @@ namespace Goweli.ViewModels
 
         [ObservableProperty]
         private object _currentViewModel;
+
+        [ObservableProperty]
+        private Bitmap? _bookCoverImage;
+
+        [ObservableProperty]
+        private bool _isBookCoverVisible;
 
         // Commands for left side buttons
         public RelayCommand AddBookViewCommand { get; }
@@ -34,6 +45,30 @@ namespace Goweli.ViewModels
             // Set an initial view
             ShowDefaultView();
 
+        }
+
+        public async void LoadBookCover(string coverUrl)
+        {
+            try
+            {
+                using var httpClient = new HttpClient();
+                var imageBytes = await httpClient.GetByteArrayAsync(coverUrl);
+
+                using var memoryStream = new MemoryStream(imageBytes);
+                BookCoverImage = new Bitmap(memoryStream);
+                IsBookCoverVisible = true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error loading image: {ex.Message}");
+                ClearBookCover();
+            }
+        }
+
+        public void ClearBookCover()
+        {
+            BookCoverImage = null;
+            IsBookCoverVisible = false;
         }
         // Sets which view model should be shown
         private void ShowAddBookView()

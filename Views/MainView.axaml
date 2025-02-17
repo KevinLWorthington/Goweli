@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="600"
-		Width="1024" Height="600"
+		Width="1024" Height="900"
 		xmlns:vm="clr-namespace:Goweli.ViewModels"
 		xmlns:view="clr-namespace:Goweli.Views"
         x:Class="Goweli.Views.MainView"
@@ -55,6 +55,14 @@
 						<Label Content="SEARCH"></Label>
 					</StackPanel>
 				</Button>
+				<Border Grid.Column="2"
+						IsVisible="{Binding IsBookCoverVisible}"
+						Margin="10">
+						<Image Source="{Binding BookCoverImage}"
+							   Stretch="Uniform"></Image>
+					</Border>
+					
+				
 			</StackPanel>
 		</Grid>
 			

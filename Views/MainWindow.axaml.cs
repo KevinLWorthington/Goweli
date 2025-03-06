@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace Goweli.Views;
 
-public partial class MainView : UserControl
+public partial class MainWindow : Window
 {
-    public MainView()
+    public MainWindow()
     {
         InitializeComponent();
     }

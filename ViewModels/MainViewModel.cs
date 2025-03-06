@@ -7,88 +7,63 @@ using System;
 using System.IO;
 using System.Net.Http;
 
-namespace Goweli.ViewModels
+namespace Goweli.ViewModels;
+
+public partial class MainViewModel : ViewModelBase
 {
+    [ObservableProperty]
+    private object _CurrentViewModel;
 
-    // Sets up commands for view switching
+    [ObservableProperty]
+    private Bitmap? _bookCoverImage;
 
-    public partial class MainViewModel : ViewModelBase
+    [ObservableProperty]
+    private bool _isBookCoverVisible;
+
+    public RelayCommand AddBookViewCommand { get; }
+    public RelayCommand ViewBooksCommand { get; }
+    public RelayCommand SearchCommand { get; }
+    public RelayCommand ShowDefaultViewCommand { get; } 
+
+    public async void LoadBookCover(string coverUrl)
     {
-        // Current view model to be shown
-
-        [ObservableProperty]
-        private object _currentViewModel;
-
-        [ObservableProperty]
-        private Bitmap? _bookCoverImage;
-
-        [ObservableProperty]
-        private bool _isBookCoverVisible;
-
-        // Commands for left side buttons
-        public RelayCommand AddBookViewCommand { get; }
-        public RelayCommand ViewBooksCommand { get; }
-        public RelayCommand SearchCommand { get; }
-        public RelayCommand ShowDefaultViewCommand { get; }
-
-        private readonly IDialogService _dialogService;
-
-        public MainViewModel(IDialogService dialogService)
+        try
         {
-            _dialogService = dialogService;
-            // Links commands to the view models
-            AddBookViewCommand = new RelayCommand(ShowAddBookView);
-            ViewBooksCommand = new RelayCommand(ShowViewBooks);
-            ShowDefaultViewCommand = new RelayCommand(ShowDefaultView);
-            // SearchCommand = new RelayCommand(ShowSearchView); // If Search is implemented
-
-            // Set an initial view
-            ShowDefaultView();
-
+            using var httpClient = new HttpClient();
+            using var stream = await httpClient.GetStreamAsync(coverUrl);
+            _bookCoverImage = new Bitmap(stream);
+            IsBookCoverVisible = true;
         }
-
-        public async void LoadBookCover(string coverUrl)
+        catch (Exception ex)
         {
-            try
-            {
-                using var httpClient = new HttpClient();
-                var imageBytes = await httpClient.GetByteArrayAsync(coverUrl);
+            Debug.WriteLine($"Error loading image: {ex.Message}");
+            ClearBookCover();
+        }
+    }
 
-                using var memoryStream = new MemoryStream(imageBytes);
-                BookCoverImage = new Bitmap(memoryStream);
-                IsBookCoverVisible = true;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error loading image: {ex.Message}");
-                ClearBookCover();
-            }
-        }
+    public void ClearBookCover()
+    {
+        BookCoverImage = null;
+        IsBookCoverVisible = false;
+    }
 
-        public void ClearBookCover()
-        {
-            BookCoverImage = null;
-            IsBookCoverVisible = false;
-        }
-        // Sets which view model should be shown
-        private void ShowAddBookView()
-        {
-            CurrentViewModel = new AddBookViewModel(this);
-        }
+    private void ShowAddBookView()
+    {
+        CurrentViewModel = new AddBookViewModel(this);
+    }
 
-        private void ShowViewBooks()
-        {
-            CurrentViewModel = new ViewBooksViewModel(this, _dialogService);
-        }
+    private void ShowViewBooksView()
+    {
+        CurrentViewModel = new ViewBooksViewModel(this, new DialogService());
+    }
 
-        private void ShowSearchView()
-        {
-            CurrentViewModel = new SearchViewModel();
-        }
-
-        public void ShowDefaultView()
-        {
-            CurrentViewModel = new HomeViewModel();
-        }
+    private void ShowSearchView()
+    {
+        CurrentViewModel = new SearchViewModel();
+    }
+    
+    public void ShowDefaultView()
+    {
+        CurrentViewModel = new HomeViewModel();
     }
 }

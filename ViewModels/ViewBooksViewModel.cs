@@ -10,8 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Avalonia.Media.Imaging;
-using System.Net.Http;
 using System.Diagnostics;
 
 // View model for viewing books stored in the database

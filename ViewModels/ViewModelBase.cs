@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Goweli.ViewModels
-{
-    public class ViewModelBase : ObservableObject
-    {
+namespace Goweli.ViewModels;
 
-    }
+public abstract class ViewModelBase : ObservableObject
+{
 }

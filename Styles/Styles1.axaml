@@ -5,7 +5,7 @@
       <!-- Add Controls for Previewer Here -->
     </Border>
   </Design.PreviewWith>
-	<!-- Sets the main font for text -->
+	<!-- Sets the main font for text in the desktop application -->
 	<Style Selector="Window">
 		<Setter Property="FontFamily" Value="{DynamicResource ResourceKey=Akira}"></Setter>
 	</Style>

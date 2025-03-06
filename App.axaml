@@ -4,22 +4,22 @@
              xmlns:views="clr-namespace:Goweli.Views"
              x:Class="Goweli.App"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+	<!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-    <Application.Styles>
-        <FluentTheme />
+	<Application.Styles>
+		<FluentTheme />
 		<StyleInclude Source="Styles/Styles1.axaml"></StyleInclude>
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
-    </Application.Styles>
+	</Application.Styles>
 
-	<Application.DataTemplates>
+	<!--<Application.DataTemplates>
 		<DataTemplate DataType="vm:AddBookViewModel">
 			<views:AddBookView />
 		</DataTemplate>
 		<DataTemplate DataType="vm:HomeViewModel">
 			<views:HomeView />
 		</DataTemplate>
-	</Application.DataTemplates>
+	</Application.DataTemplates> -->
 
 	<Application.Resources>
 		<!-- Main background color gradient -->
@@ -34,8 +34,8 @@
 		<HorizontalAlignment x:Key="SubmitButton">20</HorizontalAlignment>
 		<!-- Primary text font -->
 		<FontFamily x:Key="Akira">/Assets/Fonts/Akira Expanded Demo.otf#Akira Expanded</FontFamily>
-		<!-- Button icon font -->
+		
 		<FontFamily x:Key="PhosphorFill">/Assets/Fonts/Phosphor-Fill.ttf#Phosphor-Fill</FontFamily>
-				
+
 	</Application.Resources>
 </Application>

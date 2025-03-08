@@ -3,15 +3,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Goweli.ViewModels"
-			 xmlns:view="clr-namespace:Goweli.Views"
+             xmlns:view="clr-namespace:Goweli.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Goweli.Views.MainView"
              x:DataType="vm:MainViewModel">
-  <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:MainViewModel />
-  </Design.DataContext>
+		<vm:MainViewModel />
+	</Design.DataContext>
+
 	<!-- Define DataTemplates to map ViewModels to Views -->
 	<UserControl.DataTemplates>
 		<DataTemplate DataType="vm:HomeViewModel">
@@ -23,49 +24,53 @@
 		<DataTemplate DataType="vm:ViewBooksViewModel">
 			<view:ViewBooksView />
 		</DataTemplate>
+		<!--<DataTemplate DataType="vm:SearchViewModel">
+			<view:SearchView />
+		</DataTemplate> -->
 		<DataTemplate DataType="vm:ConfirmationDialogViewModel">
 			<view:ConfirmationDialog />
 		</DataTemplate>
 	</UserControl.DataTemplates>
 
 	<!-- Background set from App.axaml and setting up the application grid -->
-	<Grid Background="{DynamicResource ResourceKey=PrimaryBackground}" ColumnDefinitions="Auto, *">
-		<ContentControl Grid.Column="1"/>
-		<Border Grid.Column="0" Padding="20"></Border>
-		<Grid RowDefinitions="*, Auto">
+	<Grid Background="{DynamicResource ResourceKey=PrimaryBackground}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+
+		<!-- Left side navigation panel -->
+		<Grid Grid.Column="0" RowDefinitions="*, Auto">
 			<StackPanel Grid.Row="0" Spacing="12">
-				<Button Background="#00FFFFFF">
-				<Image Source="/Assets/Images/Icon.png" Width="90"></Image>
+				<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}">
+					<Image Source="/Assets/Images/Icon.png" Width="90" />
 				</Button>
-				<!-- Side menu buttons and their command bindings -->
-				<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ViewBooksCommand}">
+				<!-- Side menu buttons with updated command bindings -->
+				<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ShowViewBooksCommand}">
 					<StackPanel Orientation="Horizontal">
-						<Label Classes="icon" Content="&#xE758;"></Label>
-						<Label Content="VIEW BOOKS"></Label>
+						<Label Classes="icon" Content="&#xE758;" />
+						<Label Content="VIEW BOOKS" />
 					</StackPanel>
 				</Button>
-				<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding AddBookViewCommand}">
+				<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ShowAddBookViewCommand}">
 					<StackPanel Orientation="Horizontal">
-						<Label Classes="icon" Content="&#xE3D6;"></Label>
-						<Label Content="ADD A BOOK"></Label>
+						<Label Classes="icon" Content="&#xE3D6;" />
+						<Label Content="ADD A BOOK" />
 					</StackPanel>
 				</Button>
-				<Button HorizontalAlignment="Stretch" Margin="10">
+				<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding SearchCommand}">
 					<StackPanel Orientation="Horizontal">
-						<Label Classes="icon" Content="&#xE30C;"></Label>
-						<Label Content="SEARCH"></Label>
+						<Label Classes="icon" Content="&#xE30C;" />
+						<Label Content="SEARCH" />
 					</StackPanel>
 				</Button>
-				<Border Grid.Column="2"
-						IsVisible="{Binding IsBookCoverVisible}"
-						Margin="10">
-					<Image Source="{Binding BookCoverImage}"
-						   Stretch="Uniform"></Image>
+				<Border IsVisible="{Binding IsBookCoverVisible}" Margin="10">
+					<Image Source="{Binding BookCoverImage}" Stretch="Uniform" />
 				</Border>
-
-
 			</StackPanel>
 		</Grid>
 
+		<!-- Main content area -->
+		<ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}" />
 	</Grid>
 </UserControl>

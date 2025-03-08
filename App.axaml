@@ -12,14 +12,14 @@
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 	</Application.Styles>
 
-	<!--<Application.DataTemplates>
+	<Application.DataTemplates>
 		<DataTemplate DataType="vm:AddBookViewModel">
 			<views:AddBookView />
 		</DataTemplate>
 		<DataTemplate DataType="vm:HomeViewModel">
 			<views:HomeView />
 		</DataTemplate>
-	</Application.DataTemplates> -->
+	</Application.DataTemplates>
 
 	<Application.Resources>
 		<!-- Main background color gradient -->

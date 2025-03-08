@@ -6,10 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Goweli.Views.ViewBooksView"
              x:DataType="vm:ViewBooksViewModel">
-
 	<Grid RowDefinitions="Auto,*,Auto" Margin="20">
 		<TextBlock Grid.Row="0" Text="Your Books" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
-
 		<Grid Grid.Row="1" RowDefinitions="*,Auto">
 			<!-- Books list -->
 			<DataGrid Grid.Row="0"
@@ -29,10 +27,9 @@
 				</DataGrid.Columns>
 			</DataGrid>
 
-			<!-- Status message for WebAssembly feedback -->
+			<!-- Status message for WebAssembly feedback - always visible -->
 			<TextBlock Grid.Row="1"
 					  Text="{Binding StatusMessage}"
-					  IsVisible="{Binding StatusMessage.Length, Converter={x:Static BoolConverters.IsGreaterThan}, ConverterParameter=0}"
 					  Foreground="Green"
 					  HorizontalAlignment="Center"
 					  FontWeight="Bold"

@@ -1,9 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Goweli.Services;
 using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -20,11 +18,6 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isBookCoverVisible;
 
-    // Check if running in browser/WebAssembly environment
-    private static readonly bool IsRunningInBrowser =
-        OperatingSystem.IsBrowser() ||
-        AppContext.TargetFrameworkName?.Contains("Browser") == true;
-
     public MainViewModel()
     {
         // Initialize the default view when the application starts
@@ -37,20 +30,7 @@ public partial class MainViewModel : ViewModelBase
         try
         {
             Console.WriteLine("ShowAddBookView command executed");
-
-            // Check if we're in WebAssembly and use a simplified version if needed
-            if (IsRunningInBrowser)
-            {
-                // For WebAssembly, use a simplified or mock AddBookViewModel 
-                // that doesn't depend on unsupported features
-                CurrentViewModel = new AddBookViewModel(this, isWebAssembly: true);
-                Console.WriteLine("Created WebAssembly-specific AddBookViewModel");
-            }
-            else
-            {
-                // For desktop, use the full implementation
-                CurrentViewModel = new AddBookViewModel(this, isWebAssembly: false);
-            }
+            CurrentViewModel = new AddBookViewModel(this);
         }
         catch (Exception ex)
         {
@@ -65,16 +45,7 @@ public partial class MainViewModel : ViewModelBase
         try
         {
             Console.WriteLine("ShowViewBooks command executed");
-
-            if (IsRunningInBrowser)
-            {
-                // WebAssembly-specific implementation or mock
-                CurrentViewModel = new ViewBooksViewModel(this, new DialogService(), isWebAssembly: true);
-            }
-            else
-            {
-                CurrentViewModel = new ViewBooksViewModel(this, new DialogService(), isWebAssembly: false);
-            }
+            CurrentViewModel = new ViewBooksViewModel(this);
         }
         catch (Exception ex)
         {

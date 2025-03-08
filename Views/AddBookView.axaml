@@ -6,10 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Goweli.Views.AddBookView"
              x:DataType="vm:AddBookViewModel">
-
 	<Grid RowDefinitions="Auto,*,Auto" Margin="20">
 		<TextBlock Grid.Row="0" Text="Add New Book" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
-
 		<ScrollViewer Grid.Row="1">
 			<StackPanel Spacing="15" Margin="0,0,0,20">
 				<!-- Book information fields -->
@@ -17,24 +15,19 @@
 					<TextBlock Text="Title" Margin="0,0,0,5"/>
 					<TextBox Text="{Binding BookTitle}" Watermark="Enter book title"/>
 				</StackPanel>
-
 				<StackPanel>
 					<TextBlock Text="Author" Margin="0,0,0,5"/>
 					<TextBox Text="{Binding AuthorName}" Watermark="Enter author name"/>
 				</StackPanel>
-
 				<StackPanel>
 					<TextBlock Text="ISBN (Optional)" Margin="0,0,0,5"/>
 					<TextBox Text="{Binding ISBN}" Watermark="Enter ISBN"/>
 				</StackPanel>
-
 				<StackPanel>
 					<TextBlock Text="Synopsis (Optional)" Margin="0,0,0,5"/>
 					<TextBox Text="{Binding Synopsis}" Height="100" AcceptsReturn="True" TextWrapping="Wrap" Watermark="Enter book synopsis"/>
 				</StackPanel>
-
 				<CheckBox IsChecked="{Binding IsChecked}" Content="Book has been read"/>
-
 				<!-- Cover preview section -->
 				<Border IsVisible="{Binding IsPreviewVisible}" BorderBrush="Gray" BorderThickness="1" Padding="10" CornerRadius="5">
 					<StackPanel Spacing="10">
@@ -47,15 +40,14 @@
 					</StackPanel>
 				</Border>
 
-				<!-- Status message - for WebAssembly feedback -->
+				<!-- Status message - simple visibility approach -->
+				<!-- This TextBlock will always be in layout but with empty content when StatusMessage is empty -->
 				<TextBlock Text="{Binding StatusMessage}"
-						  IsVisible="{Binding StatusMessage, Converter={x:Static StringNotNullOrEmptyConverter.Instance}}"
 						  Foreground="Green"
 						  HorizontalAlignment="Center"
 						  FontWeight="Bold"/>
 			</StackPanel>
 		</ScrollViewer>
-
 		<Button Grid.Row="2"
 			   Content="{Binding ButtonText}"
 			   Command="{Binding SubmitCommand}"

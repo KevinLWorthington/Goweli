@@ -23,6 +23,11 @@ namespace Goweli.ViewModels
         [ObservableProperty]
         private bool _isStatusVisible = false;
 
+        // When StatusMessage is set, also update IsStatusVisible
+        partial void OnStatusMessageChanged(string value)
+        {
+            IsStatusVisible = !string.IsNullOrEmpty(value);
+        }
 
         public ViewBooksViewModel(MainViewModel mainViewModel)
         {

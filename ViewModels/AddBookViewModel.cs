@@ -20,9 +20,8 @@ namespace Goweli.ViewModels
     public partial class AddBookViewModel : ViewModelBase
     {
         private readonly MainViewModel _mainViewModel;
+        private bool _continueWithNullCover = false;
         private string? _validatedCoverUrl;
-        private int _currentCoverIndex;
-        private List<string> _coverUrls = new List<string>();
 
         private readonly HttpClient _client;
         private readonly OpenLibraryClient _olClient;
@@ -67,7 +66,7 @@ namespace Goweli.ViewModels
         {
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
             _client = new HttpClient();
-            _olClient = new OpenLibraryClient();
+            // _olClient = new OpenLibraryClient();
             Console.WriteLine("AddBookViewModel created for WebAssembly");
         }
 
@@ -75,7 +74,6 @@ namespace Goweli.ViewModels
         {
             try
             {
-                using var httpClient = new HttpClient();
                 var imageBytes = await _client.GetByteArrayAsync(url);
 
                 using var memoryStream = new MemoryStream(imageBytes);
@@ -92,14 +90,13 @@ namespace Goweli.ViewModels
         {
             try
             {
-                using var httpClient = new HttpClient();
-                httpClient.Timeout = TimeSpan.FromSeconds(10);
-                httpClient.DefaultRequestHeaders.Add("User-Agent", "Goweli Book Application/1.0");
+                _client.Timeout = TimeSpan.FromSeconds(10);
+                _client.DefaultRequestHeaders.Add("User-Agent", "Goweli Book Application/1.0");
 
                 Console.WriteLine($"Searching for book with title: {title}");
 
                 var searchResults = await OLSearchLoader.GetSearchResultsAsync(
-                    httpClient,
+                    _client,
                     title,
                     new KeyValuePair<string, string>("limit", "1")
                 );
@@ -125,7 +122,7 @@ namespace Goweli.ViewModels
                     try
                     {
                         // Download and create the Bitmap for display
-                        var imageResponse = await httpClient.GetByteArrayAsync(coverUrl);
+                        var imageResponse = await _client.GetByteArrayAsync(coverUrl);
                         using var memoryStream = new MemoryStream(imageResponse);
 
                         // Set both the Bitmap for display and the URL for storage
@@ -182,7 +179,7 @@ namespace Goweli.ViewModels
                 ButtonText = "Searching...";
                 StatusMessage = "Searching for book cover...";
 
-                await SearchForCoverImages();
+                await GetBookCoverUrlAsync(BookTitle);
 
                 // Update UI to show we're saving
                 ButtonText = "Adding Book...";
@@ -246,8 +243,7 @@ namespace Goweli.ViewModels
         private async Task RejectCover()
         {
             _validatedCoverUrl = null;
-            _currentCoverIndex++;
-            await LoadNextCoverImage();
+            _continueWithNullCover = true;
         }
     }
 }

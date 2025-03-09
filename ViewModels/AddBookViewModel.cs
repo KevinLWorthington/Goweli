@@ -70,7 +70,7 @@ namespace Goweli.ViewModels
             Console.WriteLine("AddBookViewModel created for WebAssembly");
         }
 
-        private async Task<Bitmap?> LoadImageFromUrl(string url)
+       /* private async Task<Bitmap?> LoadImageFromUrl(string url)
         {
             try
             {
@@ -84,14 +84,14 @@ namespace Goweli.ViewModels
                 Console.WriteLine($"Error loading image: {ex.Message}");
                 return null;
             }
-        }
+        } */
 
         private async Task<string?> GetBookCoverUrlAsync(string title)
         {
             try
             {
                 _client.Timeout = TimeSpan.FromSeconds(10);
-                _client.DefaultRequestHeaders.Add("User-Agent", "Goweli Book Application/1.0");
+                //_client.DefaultRequestHeaders.Add("User-Agent", "Goweli Book Application/1.0");
 
                 Console.WriteLine($"Searching for book with title: {title}");
 

@@ -19,10 +19,8 @@ namespace Goweli.ViewModels
         private string? _validatedCoverUrl;
         private readonly HttpClient _client;
 
-        // Static collection to store books in memory if database is not available
         public static ObservableCollection<Book> Books { get; } = new ObservableCollection<Book>();
 
-        // Book information properties
         [ObservableProperty]
         private string _bookTitle = string.Empty;
 
@@ -49,12 +47,10 @@ namespace Goweli.ViewModels
 
         [ObservableProperty]
         private string _statusMessage = string.Empty;
-
-        // UI state properties
+              
         [ObservableProperty]
         private string _buttonText = "Submit";
 
-        // Constructor initializes the view model and sets up commands
         public AddBookViewModel(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));

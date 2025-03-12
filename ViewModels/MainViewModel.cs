@@ -18,12 +18,16 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isBookCoverVisible;
 
+    private readonly HttpClient _httpClient;
+
     public MainViewModel()
     {
-        // Initialize the default view when the application starts - keep it simple
+        // Initialize the default view when the application starts
         try
         {
             Console.WriteLine("MainViewModel constructor starting");
+            _httpClient = new HttpClient();
+            IsBookCoverVisible = false; // Start with cover hidden
             ShowDefault();
             Console.WriteLine("MainViewModel constructor completed");
         }
@@ -82,6 +86,8 @@ public partial class MainViewModel : ViewModelBase
         {
             Console.WriteLine("ShowDefault command executed");
             CurrentViewModel = new HomeViewModel();
+            // Clear any displayed book cover when returning to home
+            ClearBookCover();
         }
         catch (Exception ex)
         {
@@ -91,17 +97,37 @@ public partial class MainViewModel : ViewModelBase
 
     public async Task LoadBookCoverAsync(string coverUrl)
     {
+        if (string.IsNullOrEmpty(coverUrl))
+        {
+            Console.WriteLine("Cover URL is empty, not loading image");
+            ClearBookCover();
+            return;
+        }
+
         try
         {
-            using var httpClient = new HttpClient();
-            using var stream = await httpClient.GetStreamAsync(coverUrl);
-            BookCoverImage = new Bitmap(stream);
-            IsBookCoverVisible = true;
+            Console.WriteLine($"MainViewModel.LoadBookCoverAsync: Loading from URL: {coverUrl}");
+            using var response = await _httpClient.GetAsync(coverUrl);
+            response.EnsureSuccessStatusCode();
+            using var stream = await response.Content.ReadAsStreamAsync();
+
+            var bitmap = new Bitmap(stream);
+
+            // Update the properties on the UI thread
+            await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                BookCoverImage = bitmap;
+                IsBookCoverVisible = true;
+                Console.WriteLine("Cover image set and visible");
+            });
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading image: {ex.Message}");
-            ClearBookCover();
+            await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ClearBookCover();
+            });
         }
     }
 
@@ -109,5 +135,6 @@ public partial class MainViewModel : ViewModelBase
     {
         BookCoverImage = null;
         IsBookCoverVisible = false;
+        Console.WriteLine("Book cover cleared");
     }
 }

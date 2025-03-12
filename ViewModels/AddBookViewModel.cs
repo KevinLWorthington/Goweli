@@ -4,14 +4,11 @@ using Goweli.Models;
 using System;
 using System.Threading.Tasks;
 using System.Net.Http;
-using OpenLibraryNET;
-using OpenLibraryNET.Loader;
 using Avalonia.Media.Imaging;
 using System.IO;
 using System.Collections.ObjectModel;
+using OpenLibraryNET.Loader;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Goweli.Data;
 
 namespace Goweli.ViewModels
 {
@@ -20,11 +17,12 @@ namespace Goweli.ViewModels
         private readonly MainViewModel _mainViewModel;
         private bool _continueWithNullCover = false;
         private string? _validatedCoverUrl;
-
         private readonly HttpClient _client;
-        private readonly OpenLibraryClient _olClient;
 
-        // Book information properties - these connect the UI input fields to our data model
+        // Static collection to store books in memory if database is not available
+        public static ObservableCollection<Book> Books { get; } = new ObservableCollection<Book>();
+
+        // Book information properties
         [ObservableProperty]
         private string _bookTitle = string.Empty;
 
@@ -56,15 +54,12 @@ namespace Goweli.ViewModels
         [ObservableProperty]
         private string _buttonText = "Submit";
 
-        // A static collection to hold books (in-memory storage for WebAssembly)
-        public static ObservableCollection<Book> Books { get; } = new ObservableCollection<Book>();
-
         // Constructor initializes the view model and sets up commands
         public AddBookViewModel(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
             _client = new HttpClient();
-            Console.WriteLine("AddBookViewModel created for WebAssembly");
+            Console.WriteLine("AddBookViewModel created");
         }
 
         private async Task<string?> GetBookCoverUrlAsync(string title)
@@ -129,16 +124,9 @@ namespace Goweli.ViewModels
                 _validatedCoverUrl = null;
                 return null;
             }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Error in GetBookCoverUrlAsync: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                throw;
-            }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in GetBookCoverUrlAsync: {ex.GetType().Name}");
-                Console.WriteLine($"Message: {ex.Message}");
+                Console.WriteLine($"Error in GetBookCoverUrlAsync: {ex.Message}");
                 Console.WriteLine($"Stack trace: {ex.StackTrace}");
             }
 
@@ -146,9 +134,8 @@ namespace Goweli.ViewModels
             _validatedCoverUrl = null;
             return null;
         }
-    
 
-        // Handles the book submission process
+        // Simplified book submission
         [RelayCommand]
         private async Task Submit()
         {
@@ -163,21 +150,15 @@ namespace Goweli.ViewModels
                     return;
                 }
 
-                // Update UI to show we're searching
                 ButtonText = "Searching...";
                 StatusMessage = "Searching for book cover...";
 
                 await GetBookCoverUrlAsync(BookTitle);
 
-                // Update UI to show we're saving
-               // ButtonText = "Adding Book...";
-                //StatusMessage = "Adding book to library...";
-
-                // Simulate adding a book
-                await Task.Delay(1000);
-
+                // Create a new book
                 var newBook = new Book
                 {
+                    Id = Books.Count + 1,
                     BookTitle = this.BookTitle,
                     AuthorName = this.AuthorName,
                     ISBN = this.ISBN,
@@ -186,28 +167,10 @@ namespace Goweli.ViewModels
                     CoverUrl = _validatedCoverUrl
                 };
 
-                using (var context = new AppDbContext())
-                {
-                    context.Books.Add(newBook);
-                   // await context.SaveChangesAsync();
-                }
+                // Add to in-memory collection
+                Books.Add(newBook);
 
-                    /*
-                    var newBook = new Book
-                    {
-                        Id = Books.Count + 1,
-                        BookTitle = this.BookTitle,
-                        AuthorName = this.AuthorName,
-                        ISBN = this.ISBN,
-                        Synopsis = this.Synopsis,
-                        IsChecked = this.IsChecked,
-                        CoverUrl = _validatedCoverUrl
-                    };
-
-                    // Add to our in-memory collection
-                    Books.Add(newBook); */
-
-                    ButtonText = "Book Added!";
+                ButtonText = "Book Added!";
                 StatusMessage = "Book added successfully!";
                 await Task.Delay(2000);
 
@@ -225,7 +188,6 @@ namespace Goweli.ViewModels
             {
                 // Handle any errors that occur during submission
                 Console.WriteLine($"Error in Submit: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
 
                 ButtonText = "Submit";
                 StatusMessage = $"Error: {ex.Message}";
@@ -236,21 +198,20 @@ namespace Goweli.ViewModels
 
         // Handlers for cover validation commands
         [RelayCommand]
-        private async Task AcceptCover()
+        private void AcceptCover()
         {
             _validatedCoverUrl = PreviewCoverUrl;
             IsPreviewVisible = false;
-            Console.WriteLine($"Cover accepted: {_validatedCoverUrl}");
         }
 
         [RelayCommand]
-        private async Task RejectCover()
+        private void RejectCover()
         {
             _validatedCoverUrl = null;
             _continueWithNullCover = true;
+            IsPreviewVisible = false;
         }
     }
 }
-
 
 

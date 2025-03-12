@@ -1,54 +1,57 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
-using Avalonia.Data.Core.Plugins;
-using System.Linq;
 using Avalonia.Markup.Xaml;
 using Goweli.ViewModels;
 using Goweli.Views;
+using System;
 
-namespace Goweli;
-
-public partial class App : Application
+namespace Goweli
 {
-    public override void Initialize()
+    public partial class App : Application
     {
-        AvaloniaXamlLoader.Load(this);
-    }
-
-    public override void OnFrameworkInitializationCompleted()
-    {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        public override void Initialize()
         {
-            // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
-            // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
-            DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow
+            try
             {
-                DataContext = new MainViewModel()
-            };
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new MainView
+                Console.WriteLine("App.Initialize started");
+                AvaloniaXamlLoader.Load(this);
+                Console.WriteLine("App.Initialize completed");
+            }
+            catch (Exception ex)
             {
-                DataContext = new MainViewModel()
-            };
+                Console.WriteLine($"Error in App.Initialize: {ex.Message}");
+            }
         }
 
-        base.OnFrameworkInitializationCompleted();
-    }
-
-    private void DisableAvaloniaDataAnnotationValidation()
-    {
-        // Get an array of plugins to remove
-        var dataValidationPluginsToRemove =
-            BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
-
-        // remove each entry found
-        foreach (var plugin in dataValidationPluginsToRemove)
+        public override void OnFrameworkInitializationCompleted()
         {
-            BindingPlugins.DataValidators.Remove(plugin);
+            try
+            {
+                Console.WriteLine("OnFrameworkInitializationCompleted started");
+
+                if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                {
+                    desktop.MainWindow = new MainWindow
+                    {
+                        DataContext = new MainViewModel()
+                    };
+                }
+                else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+                {
+                    var mainView = new MainView();
+                    var mainViewModel = new MainViewModel();
+                    mainView.DataContext = mainViewModel;
+                    singleViewPlatform.MainView = mainView;
+                }
+
+                base.OnFrameworkInitializationCompleted();
+                Console.WriteLine("OnFrameworkInitializationCompleted finished");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in OnFrameworkInitializationCompleted: {ex.Message}");
+                base.OnFrameworkInitializationCompleted();
+            }
         }
     }
 }

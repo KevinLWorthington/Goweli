@@ -20,8 +20,17 @@ public partial class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        // Initialize the default view when the application starts
-        ShowDefault();
+        // Initialize the default view when the application starts - keep it simple
+        try
+        {
+            Console.WriteLine("MainViewModel constructor starting");
+            ShowDefault();
+            Console.WriteLine("MainViewModel constructor completed");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in MainViewModel constructor: {ex.Message}");
+        }
     }
 
     [RelayCommand]
@@ -35,7 +44,6 @@ public partial class MainViewModel : ViewModelBase
         catch (Exception ex)
         {
             Console.WriteLine($"Error in ShowAddBookView: {ex.Message}");
-            Console.WriteLine($"Stack trace: {ex.StackTrace}");
         }
     }
 

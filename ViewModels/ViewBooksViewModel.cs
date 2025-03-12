@@ -1,11 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Goweli.Models;
-using Goweli.Data;
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace Goweli.ViewModels
 {
@@ -34,85 +32,13 @@ namespace Goweli.ViewModels
         public ViewBooksViewModel(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
+            Console.WriteLine("ViewBooksViewModel created");
 
-            // Load books from the static collection in AddBookViewModel
+            // Load books from the static collection
             LoadBooks();
         }
 
-        private async void LoadBooks()
-        {
-            try
-            {
-                using (var context = new AppDbContext())
-                {
-                    var books = await context.Books.ToListAsync();
-                    Books = new ObservableCollection<Book>(books);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading books: {ex.Message}");
-                StatusMessage = "Error loading books.";
-            }
-        }
-        [RelayCommand]
-        private async Task ViewBookDetails()
-        {
-            if (SelectedBook == null)
-            {
-                StatusMessage = "Please select a book";
-                await Task.Delay(2000);
-                StatusMessage = string.Empty;
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(SelectedBook.CoverUrl))
-            {
-                await _mainViewModel.LoadBookCoverAsync(SelectedBook.CoverUrl);
-            }
-
-            StatusMessage = $"Viewing details for '{SelectedBook.BookTitle}";
-            await Task.Delay(2000);
-            StatusMessage = string.Empty;
-        }
-
-        [RelayCommand]
-        private async Task DeleteBook()
-        {
-            if (SelectedBook == null)
-            {
-                StatusMessage = "Please select a book";
-                await Task.Delay(2000);
-                StatusMessage = string.Empty;
-                return;
-            }
-
-            StatusMessage = $"Deleting '{SelectedBook.BookTitle}'";
-            await Task.Delay(2000);
-
-            try
-            {
-                using (var context = new AppDbContext())
-                {
-                    context.Books.Remove(SelectedBook);
-                    await context.SaveChangesAsync();
-                }
-
-                Books.Remove(SelectedBook);
-                SelectedBook = null;
-
-                StatusMessage = $"{SelectedBook.BookTitle} deleted";
-                await Task.Delay(2000);
-                StatusMessage = string.Empty;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error deleting book: {ex.Message}");
-                StatusMessage = "Error deleting book.";
-            }
-        }
-
-       /* private void LoadBooks()
+        private void LoadBooks()
         {
             try
             {
@@ -133,11 +59,11 @@ namespace Goweli.ViewModels
                 StatusMessage = "Error loading books. Using sample data instead.";
                 LoadSampleBooks();
             }
-        } 
+        }
 
         private void LoadSampleBooks()
         {
-            // Create some sample books for the WebAssembly demo
+            // Create some sample books
             var sampleBooks = new ObservableCollection<Book>
             {
                 new Book
@@ -179,44 +105,30 @@ namespace Goweli.ViewModels
             }
 
             Books = AddBookViewModel.Books;
-        } */
-
-            // Display book details or navigate to details page
-            // For now, just show the cover if available
-            
-
-        
+        }
 
         [RelayCommand]
-        private void ToggleRead()
+        private async Task DeleteBook()
         {
-            if (SelectedBook == null) return;
-
-            // Toggle the read status
-            SelectedBook.IsChecked = !SelectedBook.IsChecked;
-            StatusMessage = SelectedBook.IsChecked
-                ? $"Marked '{SelectedBook.BookTitle}' as read"
-                : $"Marked '{SelectedBook.BookTitle}' as unread";
-
-            try
+            if (SelectedBook == null)
             {
-                using (var context = new AppDbContext())
-                {
-                    context.Books.Update(SelectedBook);
-                    context.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error updating book: {ex.Message}");
-                StatusMessage = "Error updating book.";
+                StatusMessage = "Please select a book";
+                await Task.Delay(2000);
+                StatusMessage = string.Empty;
+                return;
             }
 
-            var index = Books.IndexOf(SelectedBook);
-            if (index != -1)
-            {
-                Books[index] = SelectedBook;
-            }
+            StatusMessage = $"Deleting '{SelectedBook.BookTitle}'";
+            await Task.Delay(1000);
+
+            // Remove from in-memory collection
+            var bookTitle = SelectedBook.BookTitle;
+            Books.Remove(SelectedBook);
+            SelectedBook = null;
+
+            StatusMessage = $"'{bookTitle}' deleted";
+            await Task.Delay(2000);
+            StatusMessage = string.Empty;
         }
     }
 }

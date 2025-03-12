@@ -21,8 +21,9 @@
 					  Margin="0,0,0,10">
 				<DataGrid.Columns>
 					<DataGridTextColumn Header="Title" Binding="{Binding BookTitle}" Width="*"/>
-					<DataGridTextColumn Header="Author" Binding="{Binding AuthorName}" Width="*"/>
+					<DataGridTextColumn Header="Author" Binding="{Binding AuthorName}" Width="250"/>
 					<DataGridTextColumn Header="ISBN" Binding="{Binding ISBN}" Width="150"/>
+					<DataGridTextColumn Header="Synopsis" Binding="{Binding Synopsis}" Width="*" />
 					<DataGridCheckBoxColumn Header="Read" Binding="{Binding IsChecked}" Width="80"/>
 				</DataGrid.Columns>
 			</DataGrid>

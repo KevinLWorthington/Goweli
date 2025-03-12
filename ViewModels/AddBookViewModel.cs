@@ -5,15 +5,13 @@ using System;
 using System.Threading.Tasks;
 using System.Net.Http;
 using OpenLibraryNET;
-using OpenLibraryNET.Data;
 using OpenLibraryNET.Loader;
-using OpenLibraryNET.Utility;
-using System.Diagnostics;
 using Avalonia.Media.Imaging;
 using System.IO;
 using System.Collections.ObjectModel;
-using static OpenLibraryNET.Data.OLPartnerData.Item;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Goweli.Data;
 
 namespace Goweli.ViewModels
 {
@@ -66,39 +64,21 @@ namespace Goweli.ViewModels
         {
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
             _client = new HttpClient();
-            // _olClient = new OpenLibraryClient();
             Console.WriteLine("AddBookViewModel created for WebAssembly");
         }
-
-       /* private async Task<Bitmap?> LoadImageFromUrl(string url)
-        {
-            try
-            {
-                var imageBytes = await _client.GetByteArrayAsync(url);
-
-                using var memoryStream = new MemoryStream(imageBytes);
-                return new Bitmap(memoryStream);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error loading image: {ex.Message}");
-                return null;
-            }
-        } */
 
         private async Task<string?> GetBookCoverUrlAsync(string title)
         {
             try
             {
                 _client.Timeout = TimeSpan.FromSeconds(10);
-                //_client.DefaultRequestHeaders.Add("User-Agent", "Goweli Book Application/1.0");
 
                 Console.WriteLine($"Searching for book with title: {title}");
 
                 var searchResults = await OLSearchLoader.GetSearchResultsAsync(
                     _client,
                     title,
-                    new KeyValuePair<string, string>("limit", "1")
+                    new KeyValuePair<string, string>("limit", "10")
                 );
 
                 if (searchResults == null || searchResults.Length == 0)
@@ -149,16 +129,24 @@ namespace Goweli.ViewModels
                 _validatedCoverUrl = null;
                 return null;
             }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"Error in GetBookCoverUrlAsync: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                throw;
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error in GetBookCoverUrlAsync: {ex.GetType().Name}");
                 Console.WriteLine($"Message: {ex.Message}");
-
-                _continueWithNullCover = true;
-                _validatedCoverUrl = null;
-                return null;
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
             }
+
+            _continueWithNullCover = true;
+            _validatedCoverUrl = null;
+            return null;
         }
+    
 
         // Handles the book submission process
         [RelayCommand]
@@ -182,16 +170,14 @@ namespace Goweli.ViewModels
                 await GetBookCoverUrlAsync(BookTitle);
 
                 // Update UI to show we're saving
-                ButtonText = "Adding Book...";
-                StatusMessage = "Adding book to library...";
+               // ButtonText = "Adding Book...";
+                //StatusMessage = "Adding book to library...";
 
                 // Simulate adding a book
                 await Task.Delay(1000);
 
-                // Create a new book object
                 var newBook = new Book
                 {
-                    Id = Books.Count + 1,
                     BookTitle = this.BookTitle,
                     AuthorName = this.AuthorName,
                     ISBN = this.ISBN,
@@ -200,10 +186,28 @@ namespace Goweli.ViewModels
                     CoverUrl = _validatedCoverUrl
                 };
 
-                // Add to our in-memory collection
-                Books.Add(newBook);
+                using (var context = new AppDbContext())
+                {
+                    context.Books.Add(newBook);
+                   // await context.SaveChangesAsync();
+                }
 
-                ButtonText = "Book Added!";
+                    /*
+                    var newBook = new Book
+                    {
+                        Id = Books.Count + 1,
+                        BookTitle = this.BookTitle,
+                        AuthorName = this.AuthorName,
+                        ISBN = this.ISBN,
+                        Synopsis = this.Synopsis,
+                        IsChecked = this.IsChecked,
+                        CoverUrl = _validatedCoverUrl
+                    };
+
+                    // Add to our in-memory collection
+                    Books.Add(newBook); */
+
+                    ButtonText = "Book Added!";
                 StatusMessage = "Book added successfully!";
                 await Task.Delay(2000);
 

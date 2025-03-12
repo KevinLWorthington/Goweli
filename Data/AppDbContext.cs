@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
 using System.Diagnostics;
+using System.Net.Mime;
 
 namespace Goweli.Data
 {
@@ -18,7 +19,7 @@ namespace Goweli.Data
             var appRoot = AppDomain.CurrentDomain.BaseDirectory;
             // Go up from bin/Debug/net<version>
             var projectRoot = Path.GetFullPath(Path.Combine(appRoot, "../../.."));
-            _dbPath = Path.Combine(projectRoot, "books.db");
+            _dbPath = Path.Combine(projectRoot, "Data", "books.db");
 
             // Log the path we're using
             Debug.WriteLine($"Database path: {_dbPath}");

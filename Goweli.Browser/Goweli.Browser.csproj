@@ -15,12 +15,8 @@
 	<PackageReference Include="Microsoft.JSInterop" />
 	<PackageReference Include="Microsoft.JSInterop.WebAssembly" />
     <PackageReference Include="OpenLibrary.NET" />
-    <PackageReference Include="sqlite-net-pcl" />
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" />
-    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3" />
     <PackageReference Include="System.Net.Http.Json" />
     <PackageReference Include="System.Text.Json" />
-    <PackageReference Include="Uno.SQLitePCLRaw.provider.wasm" />
   </ItemGroup>
 
   <ItemGroup>

@@ -22,7 +22,7 @@
 					  BorderBrush="Gray"
 					  Margin="0,0,0,10">
 				<DataGrid.Columns>
-					<DataGridTextColumn Header="Title" Binding="{Binding BookTitle}" Width="*"/>
+					<DataGridTextColumn Header="Title" Binding="{Binding BookTitle}" Width="400"/>
 					<DataGridTextColumn Header="Author" Binding="{Binding AuthorName}" Width="250"/>
 					<DataGridTextColumn Header="ISBN" Binding="{Binding ISBN}" Width="150"/>
 					<DataGridTextColumn Header="Synopsis" Binding="{Binding Synopsis}" Width="*" />

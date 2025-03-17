@@ -118,6 +118,12 @@ namespace Goweli.ViewModels
                 StatusMessage = "Error loading books. Using sample data instead.";
                 LoadSampleBooks();
             }
+
+            if (Books.Count == 0)
+            {
+                StatusMessage = "No books found. Using sample data instead.";
+                LoadSampleBooks();
+            }
         }
 
         private void LoadSampleBooks()

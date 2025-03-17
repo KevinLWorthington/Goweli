@@ -5,6 +5,8 @@ html, body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
+    height: 100%;
+    overflow: hidden;
 }
 
 #splash-screen {
@@ -20,21 +22,123 @@ html, body {
     z-index: 1000;
 }
 
-.loader {
-    border: 16px solid #f3f3f3;
-    border-top: 16px solid #3498db;
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
+.book-loader-container {
+    --color: #eee;
+    --line-width: 1.5ch;
+    --_border-width: calc(var(--line-width) / 2);
+    --duration: 2s;
+    --spine-length: 5ch;
+    --spine-height: calc(var(--spine-length) * 0.5);
+    --page-length: 7ch;
+    --cover-length: calc(var(--page-length) + 0ch);
+    --page-offset-y: 0.4ch;
+    --page-offset-x: 0.5ch;
+    --page-anim-offset: calc(2s / 4);
+    --_width: calc( 2 * var(--cover-length) + var(--spine-length) + 2 * var(--line-width) );
+    --_wrapper-width: calc( var(--cover-length) + var(--line-width) + var(--spine-length) / 2 );
+    --_height: calc( var(--_wrapper-width) + var(--spine-height) + var(--page-offset-y) );
+    /*   --border-radius: 15px; */
+
+    position: relative;
+    width: var(--_width);
+    height: var(--_height);
+    & .spine
+
+{
+    border: var(--line-width) var(--color) solid;
+    border-radius: 0 0 9px 9px;
+    border-top: none;
+    position: absolute;
+    width: var(--spine-length);
+    height: var(--spine-height);
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+    &::after, &::before
+
+{
+    --border-radius: 15px;
+    content: "";
+    position: absolute;
+    border: solid var(--_border-width) var(--color);
+    border-radius: 15px;
+    width: calc(var(--cover-length) + var(--line-width));
+    top: 0;
 }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
+/* right cover */
+&::after {
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    left: 0;
+    transform: translatex(calc(var(--spine-length) - var(--line-width)));
+}
 
-    100% {
-        transform: rotate(360deg);
+/* left cover */
+&::before {
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    right: 0;
+    transform: translatex(calc(-1 * var(--spine-length) + var(--line-width)));
+}
+
+}
+
+& .page {
+    width: var(--_wrapper-width);
+    position: absolute;
+    right: 0;
+    bottom: calc(var(--spine-height) + var(--page-offset-y));
+    transform-origin: left center;
+    rotate: 0deg;
+    &:not(.static)
+
+{
+    animation: rotation var(--duration) linear infinite;
+    animation-delay: calc((var(--page-num) - 1) * var(--page-anim-offset));
+}
+
+&.left {
+    left: 0;
+}
+
+&.right {
+    right: 0;
+}
+
+&::after {
+    content: "";
+    display: block;
+    --_radius: calc(var(--page-length) + var(--line-length));
+    border: solid var(--_border-width) var(--color);
+    border-radius: 15px;
+    width: var(--page-length);
+}
+
+&.left::after {
+    transform: translatex( calc( 1 * (var(--_wrapper-width) - var(--page-length)) - (var(--spine-length) / 2) + var(--line-width) - var(--page-offset-x) ) );
+}
+
+&:not(.left):after {
+    transform: translatex( calc( (var(--spine-length) / 2 - var(--line-width)) + var(--page-offset-x) ) );
+}
+
+}
+}
+
+.wrapper {
+    min-width: 10ch;
+    min-height: 10ch;
+    margin: 15ch;
+}
+
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+    /*     outline: solid rgb(0 0 255 / 0.5) 2px; */
+}
+
+@keyframes rotation {
+    to {
+        rotate: -180deg;
     }
 }

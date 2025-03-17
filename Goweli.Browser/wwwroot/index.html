@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Goweli</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+    <link rel="stylesheet" href="./app.css" />
+</head>
+
+<body style="margin: 0; display: flex; flex-direction: column; min-height: 100vh;">
+    <div id="splash-screen" style="flex: 1;">
+        <div class="wrapper">
+            <div class="book-loader-container">
+                <div class="spine"></div>
+                <div class="page" style="--page-num: 1"></div>
+                <div class="page" style="--page-num: 2"></div>
+                <div class="page" style="--page-num: 3"></div>
+                <div class="page" style="--page-num: 4"></div>
+                <div class="page static right"></div>
+                <div class="page static left"></div>
+            </div>
+        </div>
+        <div style="text-align: center; font-size: small; padding: 10px; color: white; position: absolute; bottom: 10px; width: 100%;">
+            Loading animation from <a href="https://codepen.io/Jothsa-the-flexboxer/pen/jOXbzod" target="_blank" style="color: #00ff00;">Jothsa the Flexboxer</a>
+        </div>
+    </div>
+    <div id="out" style="display: none; flex: 1;">
+        <script type='module' src="./main.js"></script>
+        <script src="_framwork/blazor.webassembly.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+        <script src="./js/sqlite-wasm-service.js"></script>
+    </div>
+    <script>
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('out').style.display = 'block';
+            }, 4000);
+        });
+    </script>
+</body>
+
+</html>

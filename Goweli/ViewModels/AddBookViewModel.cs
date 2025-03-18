@@ -68,13 +68,13 @@ namespace Goweli.ViewModels
         {
             try
             {
-                _client.Timeout = TimeSpan.FromSeconds(10);
+                _client.Timeout = TimeSpan.FromSeconds(15); // Increased timeout
                 Console.WriteLine($"Searching for book with title: {title}");
 
                 var searchResults = await OLSearchLoader.GetSearchResultsAsync(
                     _client,
                     title,
-                    new KeyValuePair<string, string>("limit", "10")
+                    new KeyValuePair<string, string>("limit", "20") // Increased limit
                 );
 
                 if (searchResults == null || searchResults.Length == 0)
@@ -86,31 +86,41 @@ namespace Goweli.ViewModels
                 _coverEditionKeys.Clear();
                 _currentCoverIndex = 0;
 
+                Console.WriteLine($"Found {searchResults.Length} search results for '{title}'");
+
+                // Extract cover edition keys from all search results
                 foreach (var result in searchResults)
                 {
+                    // First try cover_edition_key
                     if (result.ExtensionData.TryGetValue("cover_edition_key", out var coverEditionKeyObj) &&
-                        coverEditionKeyObj != null)
+                        coverEditionKeyObj != null && !string.IsNullOrEmpty(coverEditionKeyObj.ToString()))
                     {
                         string coverEditionKey = coverEditionKeyObj.ToString();
-                        if (!string.IsNullOrEmpty(coverEditionKey))
-                        {
-                            _coverEditionKeys.Add(coverEditionKey);
-                        }
+                        Console.WriteLine($"Found cover_edition_key: {coverEditionKey}");
+                        _coverEditionKeys.Add(coverEditionKey);
+                    }
+                    // Then try cover_i as fallback
+                    else if (result.ExtensionData.TryGetValue("cover_i", out var coverId) &&
+                            coverId != null && !string.IsNullOrEmpty(coverId.ToString()))
+                    {
+                        string coverIdKey = coverId.ToString();
+                        Console.WriteLine($"Found cover_i: {coverIdKey}");
+                        // We'll handle this differently when displaying
+                        _coverEditionKeys.Add("ID:" + coverIdKey); // Prefixing with ID: to distinguish from edition keys
                     }
                 }
 
-                Console.WriteLine($"Found {_coverEditionKeys.Count} potential covers");
+                Console.WriteLine($"Extracted {_coverEditionKeys.Count} potential covers");
 
                 if (_coverEditionKeys.Count == 0)
                 {
-                    Console.WriteLine("No cover_edition_keys found in search results");
+                    Console.WriteLine("No cover keys found in search results");
                     return null;
                 }
 
                 await DisplayCoverAtCurrentIndexAsync();
 
                 _userDecisionTcs = new TaskCompletionSource<bool>();
-
                 await _userDecisionTcs.Task;
 
                 return _validatedCoverUrl;
@@ -127,10 +137,9 @@ namespace Goweli.ViewModels
         {
             if (_currentCoverIndex >= _coverEditionKeys.Count)
             {
-                Console.WriteLine("No more covers available");
+                Console.WriteLine($"No more covers available. Reached index {_currentCoverIndex} of {_coverEditionKeys.Count}");
                 _validatedCoverUrl = null;
                 IsPreviewVisible = false;
-
                 _userDecisionTcs?.TrySetResult(true);
                 return;
             }
@@ -139,13 +148,36 @@ namespace Goweli.ViewModels
             {
                 IsProcessingCovers = true;
                 string coverEditionKey = _coverEditionKeys[_currentCoverIndex];
-                string coverUrl = $"https://covers.openlibrary.org/b/olid/{coverEditionKey}-M.jpg";
+                Console.WriteLine($"Attempting to load cover {_currentCoverIndex + 1}/{_coverEditionKeys.Count}: Edition key = {coverEditionKey}");
 
-                Console.WriteLine($"Showing cover {_currentCoverIndex + 1} of {_coverEditionKeys.Count}: {coverUrl}");
+                string coverUrl;
+                if (coverEditionKey.StartsWith("ID:"))
+                {
+                    // Handle cover_i format
+                    string coverId = coverEditionKey.Substring(3);
+                    coverUrl = $"https://covers.openlibrary.org/b/id/{coverId}-M.jpg";
+                }
+                else
+                {
+                    // Handle cover_edition_key format
+                    coverUrl = $"https://covers.openlibrary.org/b/olid/{coverEditionKey}-M.jpg";
+                }
 
+                Console.WriteLine($"Generated cover URL: {coverUrl}");
+
+                // Add a validation check to prevent loading "no cover" placeholder
                 var imageResponse = await _client.GetByteArrayAsync(coverUrl);
-                using var memoryStream = new MemoryStream(imageResponse);
 
+                // Check if the image is the "no cover" placeholder (usually very small)
+                if (imageResponse.Length < 1000)
+                {
+                    Console.WriteLine($"Cover appears to be a placeholder (size: {imageResponse.Length} bytes). Skipping to next.");
+                    _currentCoverIndex++;
+                    await DisplayCoverAtCurrentIndexAsync();
+                    return;
+                }
+
+                using var memoryStream = new MemoryStream(imageResponse);
                 PreviewCoverImage = new Bitmap(memoryStream);
                 PreviewCoverUrl = coverUrl;
 
@@ -154,7 +186,11 @@ namespace Goweli.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error loading cover: {ex.Message}");
+                Console.WriteLine($"Error loading cover at index {_currentCoverIndex}: {ex.Message}");
+
+                // Add a small delay before trying the next cover to avoid rapid failures
+                await Task.Delay(500);
+
                 _currentCoverIndex++;
                 await DisplayCoverAtCurrentIndexAsync();
             }
@@ -186,7 +222,6 @@ namespace Goweli.ViewModels
                 // Create a new book
                 var newBook = new Book
                 {
-                    Id = Books.Count + 1,
                     BookTitle = this.BookTitle,
                     AuthorName = this.AuthorName,
                     ISBN = this.ISBN,

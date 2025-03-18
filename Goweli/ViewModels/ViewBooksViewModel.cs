@@ -44,20 +44,17 @@ namespace Goweli.ViewModels
 
         private Book? _originalState;
 
-        // When StatusMessage is set, also update IsStatusVisible
         partial void OnStatusMessageChanged(string value)
         {
             IsStatusVisible = !string.IsNullOrEmpty(value);
         }
 
-        // React to changes in SelectedBook to display book cover
         partial void OnSelectedBookChanged(Book? value)
         {
             Console.WriteLine($"SelectedBook changed: {value?.BookTitle ?? "null"}");
 
             if (value != null)
             {
-                // Load book cover if available
                 if (!string.IsNullOrEmpty(value.CoverUrl))
                 {
                     Console.WriteLine($"Loading cover URL: {value.CoverUrl}");
@@ -76,14 +73,12 @@ namespace Goweli.ViewModels
             }
         }
 
-        // Helper method to load book cover
         private void LoadBookCover(string coverUrl)
         {
             try
             {
                 Console.WriteLine($"Loading book cover from URL: {coverUrl}");
 
-                // Use Task.Run to avoid blocking UI thread, but don't await it
                 Task.Run(async () =>
                 {
                     try
@@ -301,23 +296,19 @@ namespace Goweli.ViewModels
                 StatusMessage = "Saving changes...";
                 Console.WriteLine($"Saving changes to book: {EditingBook.Id} - {EditingBook.BookTitle}");
 
-                // First update the UI to maintain responsiveness
                 int index = Books.IndexOf(_originalState);
                 if (index >= 0)
                 {
                     Books[index] = EditingBook;
                 }
 
-                // Update selected book
                 SelectedBook = EditingBook;
 
                 try
                 {
-                    // Update in database with timeout protection
                     var entity = await _dbContext.Books.FindAsync(EditingBook.Id);
                     if (entity != null)
                     {
-                        // Update all properties
                         entity.BookTitle = EditingBook.BookTitle;
                         entity.AuthorName = EditingBook.AuthorName;
                         entity.ISBN = EditingBook.ISBN;
@@ -325,19 +316,16 @@ namespace Goweli.ViewModels
                         entity.Synopsis = EditingBook.Synopsis;
                         entity.CoverUrl = EditingBook.CoverUrl;
 
-                        // Save with timeout
                         var saveTask = _dbContext.SaveChangesAsync();
                         var completedTask = await Task.WhenAny(saveTask, Task.Delay(5000));
 
                         if (completedTask == saveTask)
                         {
-                            // The save completed normally
                             Console.WriteLine("Book updated successfully in database");
                             StatusMessage = "Changes saved successfully";
                         }
                         else
                         {
-                            // The save timed out
                             Console.WriteLine("Database update operation timed out");
                             StatusMessage = "Database operation timed out, but UI updated";
                         }
@@ -350,7 +338,6 @@ namespace Goweli.ViewModels
                 }
                 catch (Exception dbEx)
                 {
-                    // If database update fails, at least the UI is updated
                     Console.WriteLine($"Database error: {dbEx.Message}");
                     StatusMessage = "Changes saved to UI only (database error)";
                 }

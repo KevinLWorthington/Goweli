@@ -25,7 +25,6 @@ public partial class MainViewModel : ViewModelBase
 
     public MainViewModel(GoweliDbContext dbContext, IServiceProvider serviceProvider)
     {
-        // Initialize the default view when the application starts
         try
         {
             Console.WriteLine("MainViewModel constructor starting");
@@ -77,7 +76,6 @@ public partial class MainViewModel : ViewModelBase
         {
             Console.WriteLine("ShowDefault command executed");
             CurrentViewModel = new HomeViewModel();
-            // Clear any displayed book cover when returning to home
             ClearBookCover();
         }
         catch (Exception ex)
@@ -104,7 +102,6 @@ public partial class MainViewModel : ViewModelBase
 
             var bitmap = new Bitmap(stream);
 
-            // Update the properties on the UI thread
             await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
             {
                 BookCoverImage = bitmap;

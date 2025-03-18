@@ -24,13 +24,10 @@ namespace Goweli.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure the Book entity
             modelBuilder.Entity<Book>(entity =>
             {
-                // Set the primary key (though this is already configured via the [Key] attribute)
                 entity.HasKey(e => e.Id);
 
-                // Configure properties
                 entity.Property(e => e.BookTitle).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.AuthorName).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.ISBN).HasMaxLength(20);

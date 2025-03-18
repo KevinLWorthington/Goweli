@@ -68,13 +68,13 @@ namespace Goweli.ViewModels
         {
             try
             {
-                _client.Timeout = TimeSpan.FromSeconds(15); // Increased timeout
+                _client.Timeout = TimeSpan.FromSeconds(15);
                 Console.WriteLine($"Searching for book with title: {title}");
 
                 var searchResults = await OLSearchLoader.GetSearchResultsAsync(
                     _client,
                     title,
-                    new KeyValuePair<string, string>("limit", "20") // Increased limit
+                    new KeyValuePair<string, string>("limit", "20")
                 );
 
                 if (searchResults == null || searchResults.Length == 0)
@@ -88,10 +88,8 @@ namespace Goweli.ViewModels
 
                 Console.WriteLine($"Found {searchResults.Length} search results for '{title}'");
 
-                // Extract cover edition keys from all search results
                 foreach (var result in searchResults)
                 {
-                    // First try cover_edition_key
                     if (result.ExtensionData.TryGetValue("cover_edition_key", out var coverEditionKeyObj) &&
                         coverEditionKeyObj != null && !string.IsNullOrEmpty(coverEditionKeyObj.ToString()))
                     {
@@ -99,14 +97,12 @@ namespace Goweli.ViewModels
                         Console.WriteLine($"Found cover_edition_key: {coverEditionKey}");
                         _coverEditionKeys.Add(coverEditionKey);
                     }
-                    // Then try cover_i as fallback
                     else if (result.ExtensionData.TryGetValue("cover_i", out var coverId) &&
                             coverId != null && !string.IsNullOrEmpty(coverId.ToString()))
                     {
                         string coverIdKey = coverId.ToString();
                         Console.WriteLine($"Found cover_i: {coverIdKey}");
-                        // We'll handle this differently when displaying
-                        _coverEditionKeys.Add("ID:" + coverIdKey); // Prefixing with ID: to distinguish from edition keys
+                        _coverEditionKeys.Add("ID:" + coverIdKey);
                     }
                 }
 
@@ -153,22 +149,18 @@ namespace Goweli.ViewModels
                 string coverUrl;
                 if (coverEditionKey.StartsWith("ID:"))
                 {
-                    // Handle cover_i format
                     string coverId = coverEditionKey.Substring(3);
                     coverUrl = $"https://covers.openlibrary.org/b/id/{coverId}-M.jpg";
                 }
                 else
                 {
-                    // Handle cover_edition_key format
                     coverUrl = $"https://covers.openlibrary.org/b/olid/{coverEditionKey}-M.jpg";
                 }
 
                 Console.WriteLine($"Generated cover URL: {coverUrl}");
 
-                // Add a validation check to prevent loading "no cover" placeholder
                 var imageResponse = await _client.GetByteArrayAsync(coverUrl);
 
-                // Check if the image is the "no cover" placeholder (usually very small)
                 if (imageResponse.Length < 1000)
                 {
                     Console.WriteLine($"Cover appears to be a placeholder (size: {imageResponse.Length} bytes). Skipping to next.");
@@ -188,7 +180,6 @@ namespace Goweli.ViewModels
             {
                 Console.WriteLine($"Error loading cover at index {_currentCoverIndex}: {ex.Message}");
 
-                // Add a small delay before trying the next cover to avoid rapid failures
                 await Task.Delay(500);
 
                 _currentCoverIndex++;
@@ -200,13 +191,11 @@ namespace Goweli.ViewModels
             }
         }
 
-        // Simplified book submission
         [RelayCommand]
         private async Task Submit()
         {
             try
             {
-                // Validate required fields
                 if (string.IsNullOrWhiteSpace(BookTitle) || string.IsNullOrWhiteSpace(AuthorName))
                 {
                     StatusMessage = "Error: Author and Title are required.";
@@ -219,7 +208,6 @@ namespace Goweli.ViewModels
 
                 await GetBookCoverUrlAsync(BookTitle);
 
-                // Create a new book
                 var newBook = new Book
                 {
                     BookTitle = this.BookTitle,
@@ -236,7 +224,6 @@ namespace Goweli.ViewModels
                 StatusMessage = "Book added successfully!";
                 await Task.Delay(2000);
 
-                // Clear fields after adding
                 BookTitle = string.Empty;
                 AuthorName = string.Empty;
                 ISBN = string.Empty;
@@ -247,7 +234,6 @@ namespace Goweli.ViewModels
             }
             catch (Exception ex)
             {
-                // Handle any errors that occur during submission
                 Console.WriteLine($"Error in Submit: {ex.Message}");
 
                 StatusMessage = $"Error: {ex.Message}";

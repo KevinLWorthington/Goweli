@@ -1,76 +1,61 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Goweli.Models;
-using Goweli.Data;
 using System;
-using System.Threading.Tasks;
-using System.Net.Http;
-using Avalonia.Media.Imaging;
-using System.IO;
-using System.Collections.ObjectModel;
-using OpenLibraryNET.Loader;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
+using OpenLibraryNET.Loader;
+using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Goweli.ViewModels
+namespace Goweli.Services
 {
-    public partial class AddBookViewModel : ViewModelBase
+    public class BookCoverService : ObservableObject
     {
-        private readonly MainViewModel _mainViewModel;
-        private readonly GoweliDbContext _dbContext;
-        private string? _validatedCoverUrl;
         private readonly HttpClient _client;
         private int _currentCoverIndex = 0;
         private List<string> _coverEditionKeys = new List<string>();
         private TaskCompletionSource<bool>? _userDecisionTcs;
-        
-        public static ObservableCollection<Book> Books { get; } = new ObservableCollection<Book>();
+        private string? _validatedCoverUrl;
 
-        // Properties to be called from the view
-        [ObservableProperty]
-        private string _bookTitle = string.Empty;
-
-        [ObservableProperty]
-        private string _authorName = string.Empty;
-
-        [ObservableProperty]
-        private string? _iSBN = string.Empty;
-
-        [ObservableProperty]
-        private string? _synopsis = string.Empty;
-
-        [ObservableProperty]
-        private bool _isChecked;
-
-        [ObservableProperty]
-        private Bitmap? _previewCoverImage;
-
-        [ObservableProperty]
-        private bool _isPreviewVisible;
-
-        [ObservableProperty]
-        private string? _previewCoverUrl;
-
-        [ObservableProperty]
-        private string _statusMessage = string.Empty;
-
-        [ObservableProperty]
-        private bool _isProcessingCovers;
-
-        // Constructor for dependency injection
-        public AddBookViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext)
+        public BookCoverService(HttpClient client)
         {
-            _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _client = new HttpClient();
+            _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
-        // Method to get the book cover URL
-        private async Task<string?> GetBookCoverUrlAsync(string title)
+        private Bitmap? _previewCoverImage;
+        public Bitmap? PreviewCoverImage
         {
+            get => _previewCoverImage;
+            set => SetProperty(ref _previewCoverImage, value);
+        }
+
+        private string? _previewCoverUrl;
+        public string? PreviewCoverUrl
+        {
+            get => _previewCoverUrl;
+            set => SetProperty(ref _previewCoverUrl, value);
+        }
+
+        private bool _isPreviewVisible;
+        public bool IsPreviewVisible
+        {
+            get => _isPreviewVisible;
+            set => SetProperty(ref _isPreviewVisible, value);
+        }
+
+        private bool _isProcessingCovers;
+        public bool IsProcessingCovers
+        {
+            get => _isProcessingCovers;
+            set => SetProperty(ref _isProcessingCovers, value);
+        }
+
+        public async Task<string?> GetBookCoverUrlAsync(string title)
+        {
+            try
+            {
                 _client.Timeout = TimeSpan.FromSeconds(15);
 
-                // Search for the book title in Open Library API using OpenLibraryNET
                 var searchResults = await OLSearchLoader.GetSearchResultsAsync(
                     _client,
                     title,
@@ -101,7 +86,6 @@ namespace Goweli.ViewModels
                     }
                 }
 
-
                 if (_coverEditionKeys.Count == 0)
                 {
                     return null;
@@ -112,10 +96,14 @@ namespace Goweli.ViewModels
                 _userDecisionTcs = new TaskCompletionSource<bool>();
                 await _userDecisionTcs.Task;
 
-                return _validatedCoverUrl;            
+                return _validatedCoverUrl;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        // Method to display the book cover
         private async Task DisplayCoverAtCurrentIndexAsync()
         {
             if (_currentCoverIndex >= _coverEditionKeys.Count)
@@ -130,10 +118,8 @@ namespace Goweli.ViewModels
             {
                 IsProcessingCovers = true;
                 string coverEditionKey = _coverEditionKeys[_currentCoverIndex];
-
-                // Generate the cover URL based on the cover edition key or cover ID in the search results
                 string coverUrl;
-                                
+
                 if (coverEditionKey.StartsWith("ID:"))
                 {
                     string coverId = coverEditionKey.Substring(3);
@@ -144,7 +130,6 @@ namespace Goweli.ViewModels
                     coverUrl = $"https://covers.openlibrary.org/b/olid/{coverEditionKey}-M.jpg";
                 }
 
-
                 var imageResponse = await _client.GetByteArrayAsync(coverUrl);
 
                 if (imageResponse.Length < 1000)
@@ -153,7 +138,7 @@ namespace Goweli.ViewModels
                     await DisplayCoverAtCurrentIndexAsync();
                     return;
                 }
-                // Load the cover image in memory
+
                 using var memoryStream = new MemoryStream(imageResponse);
                 PreviewCoverImage = new Bitmap(memoryStream);
                 PreviewCoverUrl = coverUrl;
@@ -162,9 +147,7 @@ namespace Goweli.ViewModels
             }
             catch (Exception)
             {
-
                 await Task.Delay(500);
-
                 _currentCoverIndex++;
                 await DisplayCoverAtCurrentIndexAsync();
             }
@@ -174,76 +157,19 @@ namespace Goweli.ViewModels
             }
         }
 
-        // Method to submit the book
-        [RelayCommand]
-        private async Task Submit()
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(BookTitle) || string.IsNullOrWhiteSpace(AuthorName))
-                {
-                    StatusMessage = "Error: Author and Title are required.";
-                    await Task.Delay(2000);
-                    StatusMessage = string.Empty;
-                    return;
-                }
-
-                StatusMessage = "Searching for book cover...";
-
-                await GetBookCoverUrlAsync(BookTitle);
-
-                var newBook = new Book
-                {
-                    BookTitle = this.BookTitle,
-                    AuthorName = this.AuthorName,
-                    ISBN = this.ISBN,
-                    Synopsis = this.Synopsis,
-                    IsChecked = this.IsChecked,
-                    CoverUrl = _validatedCoverUrl
-                };
-
-                _dbContext.Books.Add(newBook);
-                await _dbContext.SaveChangesAsync();
-
-                StatusMessage = "Book added successfully!";
-                await Task.Delay(2000);
-
-                BookTitle = string.Empty;
-                AuthorName = string.Empty;
-                ISBN = string.Empty;
-                Synopsis = string.Empty;
-                IsChecked = false;
-
-                StatusMessage = string.Empty;
-            }
-            catch (Exception ex)
-            {
-
-                StatusMessage = $"Error: {ex.Message}";
-                await Task.Delay(2000);
-                StatusMessage = string.Empty;
-            }
-        }
-
-        // Method to accept the book cover
-        [RelayCommand]
-        private void AcceptCover()
+        public void AcceptCover()
         {
             _validatedCoverUrl = PreviewCoverUrl;
             IsPreviewVisible = false;
             _userDecisionTcs?.TrySetResult(true);
         }
 
-        // Method to reject the book cover and try the next one
-        [RelayCommand]
-        private async Task RejectCover()
+        public async Task RejectCover()
         {
             _currentCoverIndex++;
             if (_currentCoverIndex < _coverEditionKeys.Count)
             {
-                StatusMessage = "Loading next cover...";
                 await DisplayCoverAtCurrentIndexAsync();
-                StatusMessage = string.Empty;
             }
             else
             {
@@ -254,5 +180,3 @@ namespace Goweli.ViewModels
         }
     }
 }
-
-

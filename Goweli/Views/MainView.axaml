@@ -30,9 +30,16 @@
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
+<!-- Hide and show menu buttons -->
+		<Button Grid.Column="0" HorizontalAlignment="Left" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding !IsMenuVisible}">
+			<Label Classes="menu" Content="&#xEA1E;" />
+		</Button>
+		<Button Grid.Column="0" HorizontalAlignment="Left" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding IsMenuVisible}">
+			<Label Classes="menu" Content="&#xEA1C;" />
+		</Button>
 
 		<!-- Left side navigation panel -->
-		<Grid Grid.Column="0" RowDefinitions="*, Auto">
+		<Grid Grid.Column="0" RowDefinitions="*, Auto" IsVisible="{Binding IsMenuVisible}">
 			<StackPanel Grid.Row="0" Spacing="12">
 				<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}">
 					<Image Source="/Assets/Images/Icon.png" Width="90" />

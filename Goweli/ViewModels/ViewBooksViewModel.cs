@@ -13,9 +13,11 @@ namespace Goweli.ViewModels
 {
     public partial class ViewBooksViewModel : ViewModelBase
     {
+        // Private fields for dependency injection
         private readonly MainViewModel _mainViewModel;
         private readonly GoweliDbContext _dbContext;
 
+        // Constructor for dependency injection
         public ViewBooksViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
@@ -24,6 +26,7 @@ namespace Goweli.ViewModels
             LoadBooks();
         }
 
+        // Observable properties for data binding
         [ObservableProperty]
         private ObservableCollection<Book> _books = new();
 
@@ -44,6 +47,7 @@ namespace Goweli.ViewModels
 
         private Book? _originalState;
 
+        // Methods to handle property changes and update UI
         partial void OnStatusMessageChanged(string value)
         {
             IsStatusVisible = !string.IsNullOrEmpty(value);
@@ -69,6 +73,7 @@ namespace Goweli.ViewModels
             }
         }
 
+        // Method to load the book cover
         private void LoadBookCover(string coverUrl)
         {
             try
@@ -92,6 +97,7 @@ namespace Goweli.ViewModels
             }
         }
 
+        // Method to load the books from the database
         private async Task LoadBooks()
         {
             try
@@ -112,6 +118,7 @@ namespace Goweli.ViewModels
             }
         }
 
+        // Method to load sample books if there are no books in the database
         private void LoadSampleBooks()
         {
             var sampleBooks = new ObservableCollection<Book>
@@ -160,6 +167,7 @@ namespace Goweli.ViewModels
             Books = new ObservableCollection<Book>(sampleBooks);
         }
 
+        // Method to delete a book
         [RelayCommand]
         private async Task DeleteBook()
         {
@@ -216,6 +224,7 @@ namespace Goweli.ViewModels
             }
         }
 
+        // Method to edit a book
         [RelayCommand]
         private void EditBook()
         {
@@ -264,6 +273,7 @@ namespace Goweli.ViewModels
             }
         }
 
+        // Method to save changes to a book
         [RelayCommand]
         private async Task SaveEdit()
         {
@@ -334,6 +344,7 @@ namespace Goweli.ViewModels
             StatusMessage = string.Empty;
         }
 
+        // Method to cancel book editing
         [RelayCommand]
         private void CancelEdit()
         {

@@ -4,6 +4,7 @@ using Goweli.Models;
 
 namespace Goweli.Services
 {
+    // IDatabaseService interface
     public interface IDatabaseService
     {
         Task InitializeAsync();

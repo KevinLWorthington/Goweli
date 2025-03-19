@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Goweli.Models
 {
+    // Book model
     public class Book
     {
         [Key]

@@ -10,6 +10,7 @@ namespace Goweli.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
+    // Properties to be called from the view
     [ObservableProperty]
     private object? _currentViewModel;
 
@@ -18,11 +19,12 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isBookCoverVisible;
-
+        
     private readonly HttpClient _httpClient;
     private readonly GoweliDbContext _dbContext;
     private readonly IServiceProvider _serviceProvider;
 
+    // Constructor for dependency injection
     public MainViewModel(GoweliDbContext dbContext, IServiceProvider serviceProvider)
     {
         try
@@ -38,6 +40,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    // Commands for changing views
     [RelayCommand]
     private void ShowAddBookView()
     {
@@ -75,6 +78,7 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    // Method to load the book cover
     public async Task LoadBookCoverAsync(string coverUrl)
     {
         if (string.IsNullOrEmpty(coverUrl))
@@ -105,7 +109,8 @@ public partial class MainViewModel : ViewModelBase
             });
         }
     }
-
+    
+    // Method to clear the book cover
     public void ClearBookCover()
     {
         BookCoverImage = null;

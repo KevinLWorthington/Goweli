@@ -37,7 +37,7 @@
 				<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}">
 					<Image Source="/Assets/Images/Icon.png" Width="90" />
 				</Button>
-				<!-- Side menu buttons with updated command bindings -->
+				<!-- Side menu buttons with command bindings -->
 				<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ShowViewBooksCommand}">
 					<StackPanel Orientation="Horizontal">
 						<Label Classes="icon" Content="&#xE758;" />

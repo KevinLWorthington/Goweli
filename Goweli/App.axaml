@@ -16,6 +16,9 @@
 		<DataTemplate DataType="vm:AddBookViewModel">
 			<views:AddBookView />
 		</DataTemplate>
+		<DataTemplate DataType="vm:ViewBooksViewModel">
+			<views:ViewBooksView />
+		</DataTemplate>
 		<DataTemplate DataType="vm:HomeViewModel">
 			<views:HomeView />
 		</DataTemplate>

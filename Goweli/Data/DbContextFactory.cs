@@ -6,6 +6,7 @@ namespace Goweli.Data
 {
     public class DbContextFactory : IDesignTimeDbContextFactory<GoweliDbContext>
     {
+        // This method creates a new instance of the GoweliDbContext class
         public GoweliDbContext CreateDbContext(string[] args)
         {
             var optionsBuilder = new DbContextOptionsBuilder<GoweliDbContext>();
@@ -14,6 +15,7 @@ namespace Goweli.Data
         }
     }
 
+    // GoweliDbContext class represents the database context
     public class GoweliDbContext : DbContext
     {
         public GoweliDbContext(DbContextOptions<GoweliDbContext> options) : base(options) { }

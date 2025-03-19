@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Goweli.Services
 {
+    // DatabaseService class implements IDatabaseService interface
     public class DatabaseService : IDatabaseService
     {
         private readonly GoweliDbContext _dbContext;

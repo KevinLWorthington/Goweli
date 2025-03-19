@@ -72,6 +72,7 @@ namespace Goweli.ViewModels
             {
                 _client.Timeout = TimeSpan.FromSeconds(15);
 
+                // Search for the book title in Open Library API using OpenLibraryNET
                 var searchResults = await OLSearchLoader.GetSearchResultsAsync(
                     _client,
                     title,

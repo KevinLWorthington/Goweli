@@ -10,7 +10,6 @@ using System.IO;
 using System.Collections.ObjectModel;
 using OpenLibraryNET.Loader;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 
 namespace Goweli.ViewModels
 {

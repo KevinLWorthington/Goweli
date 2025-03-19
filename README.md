@@ -1,4 +1,4 @@
-# Goweli - Personal Book Collection Manager
+# Goweli - Personal Book Inventory System
 
 ![Goweli Logo](https://github.com/KevinLWorthington/SDProjectPlan/blob/main/Assets/GOWELILOGOPLAIN.png)
 

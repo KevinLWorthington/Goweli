@@ -23,9 +23,10 @@ namespace Goweli.ViewModels
         private int _currentCoverIndex = 0;
         private List<string> _coverEditionKeys = new List<string>();
         private TaskCompletionSource<bool>? _userDecisionTcs;
-
+        
         public static ObservableCollection<Book> Books { get; } = new ObservableCollection<Book>();
 
+        // Properties to be called from the view
         [ObservableProperty]
         private string _bookTitle = string.Empty;
 
@@ -56,20 +57,20 @@ namespace Goweli.ViewModels
         [ObservableProperty]
         private bool _isProcessingCovers;
 
+        // Constructor for dependency injection
         public AddBookViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext)
         {
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _client = new HttpClient();
-            Console.WriteLine("AddBookViewModel created");
         }
 
+        // Method to get the book cover URL
         private async Task<string?> GetBookCoverUrlAsync(string title)
         {
             try
             {
                 _client.Timeout = TimeSpan.FromSeconds(15);
-                Console.WriteLine($"Searching for book with title: {title}");
 
                 var searchResults = await OLSearchLoader.GetSearchResultsAsync(
                     _client,
@@ -79,14 +80,11 @@ namespace Goweli.ViewModels
 
                 if (searchResults == null || searchResults.Length == 0)
                 {
-                    Console.WriteLine("No works found for the given title");
                     return null;
                 }
 
                 _coverEditionKeys.Clear();
                 _currentCoverIndex = 0;
-
-                Console.WriteLine($"Found {searchResults.Length} search results for '{title}'");
 
                 foreach (var result in searchResults)
                 {
@@ -94,23 +92,19 @@ namespace Goweli.ViewModels
                         coverEditionKeyObj != null && !string.IsNullOrEmpty(coverEditionKeyObj.ToString()))
                     {
                         string coverEditionKey = coverEditionKeyObj.ToString();
-                        Console.WriteLine($"Found cover_edition_key: {coverEditionKey}");
                         _coverEditionKeys.Add(coverEditionKey);
                     }
                     else if (result.ExtensionData.TryGetValue("cover_i", out var coverId) &&
                             coverId != null && !string.IsNullOrEmpty(coverId.ToString()))
                     {
                         string coverIdKey = coverId.ToString();
-                        Console.WriteLine($"Found cover_i: {coverIdKey}");
                         _coverEditionKeys.Add("ID:" + coverIdKey);
                     }
                 }
 
-                Console.WriteLine($"Extracted {_coverEditionKeys.Count} potential covers");
 
                 if (_coverEditionKeys.Count == 0)
                 {
-                    Console.WriteLine("No cover keys found in search results");
                     return null;
                 }
 
@@ -123,17 +117,15 @@ namespace Goweli.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in GetBookCoverUrlAsync: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 return null;
             }
         }
 
+        // Method to display the book cover
         private async Task DisplayCoverAtCurrentIndexAsync()
         {
             if (_currentCoverIndex >= _coverEditionKeys.Count)
             {
-                Console.WriteLine($"No more covers available. Reached index {_currentCoverIndex} of {_coverEditionKeys.Count}");
                 _validatedCoverUrl = null;
                 IsPreviewVisible = false;
                 _userDecisionTcs?.TrySetResult(true);
@@ -144,9 +136,10 @@ namespace Goweli.ViewModels
             {
                 IsProcessingCovers = true;
                 string coverEditionKey = _coverEditionKeys[_currentCoverIndex];
-                Console.WriteLine($"Attempting to load cover {_currentCoverIndex + 1}/{_coverEditionKeys.Count}: Edition key = {coverEditionKey}");
 
+                // Generate the cover URL based on the cover edition key or cover ID in the search results
                 string coverUrl;
+                                
                 if (coverEditionKey.StartsWith("ID:"))
                 {
                     string coverId = coverEditionKey.Substring(3);
@@ -157,28 +150,24 @@ namespace Goweli.ViewModels
                     coverUrl = $"https://covers.openlibrary.org/b/olid/{coverEditionKey}-M.jpg";
                 }
 
-                Console.WriteLine($"Generated cover URL: {coverUrl}");
 
                 var imageResponse = await _client.GetByteArrayAsync(coverUrl);
 
                 if (imageResponse.Length < 1000)
                 {
-                    Console.WriteLine($"Cover appears to be a placeholder (size: {imageResponse.Length} bytes). Skipping to next.");
                     _currentCoverIndex++;
                     await DisplayCoverAtCurrentIndexAsync();
                     return;
                 }
-
+                // Load the cover image in memory
                 using var memoryStream = new MemoryStream(imageResponse);
                 PreviewCoverImage = new Bitmap(memoryStream);
                 PreviewCoverUrl = coverUrl;
 
-                Console.WriteLine($"Successfully loaded cover image from: {coverUrl}");
                 IsPreviewVisible = true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error loading cover at index {_currentCoverIndex}: {ex.Message}");
 
                 await Task.Delay(500);
 
@@ -191,6 +180,7 @@ namespace Goweli.ViewModels
             }
         }
 
+        // Method to submit the book
         [RelayCommand]
         private async Task Submit()
         {
@@ -234,7 +224,6 @@ namespace Goweli.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in Submit: {ex.Message}");
 
                 StatusMessage = $"Error: {ex.Message}";
                 await Task.Delay(2000);
@@ -242,6 +231,7 @@ namespace Goweli.ViewModels
             }
         }
 
+        // Method to accept the book cover
         [RelayCommand]
         private void AcceptCover()
         {
@@ -250,6 +240,7 @@ namespace Goweli.ViewModels
             _userDecisionTcs?.TrySetResult(true);
         }
 
+        // Method to reject the book cover and try the next one
         [RelayCommand]
         private async Task RejectCover()
         {

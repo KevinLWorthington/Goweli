@@ -9,7 +9,6 @@ internal class Program
 {
     public static async Task Main(string[] args)
     {
-        Console.WriteLine("Starting Avalonia WASM application");
 
         try
         {
@@ -17,12 +16,9 @@ internal class Program
             await BuildAvaloniaApp()
                 .UseReactiveUI()
                 .StartBrowserAppAsync("out");
-
-            Console.WriteLine("Avalonia WASM application started successfully");
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"Error starting application: {ex}");
         }
     }
 

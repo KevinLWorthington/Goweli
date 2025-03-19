@@ -27,17 +27,14 @@ public partial class MainViewModel : ViewModelBase
     {
         try
         {
-            Console.WriteLine("MainViewModel constructor starting");
             _httpClient = new HttpClient();
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             IsBookCoverVisible = false; // Start with cover hidden
             ShowDefault();
-            Console.WriteLine("MainViewModel constructor completed");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in MainViewModel constructor: {ex.Message}");
         }
     }
 
@@ -46,12 +43,10 @@ public partial class MainViewModel : ViewModelBase
     {
         try
         {
-            Console.WriteLine("ShowAddBookView command executed");
             CurrentViewModel = new AddBookViewModel(this, _dbContext);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in ShowAddBookView: {ex.Message}");
         }
     }
 
@@ -60,12 +55,10 @@ public partial class MainViewModel : ViewModelBase
     {
         try
         {
-            Console.WriteLine("ShowViewBooks command executed");
             CurrentViewModel = new ViewBooksViewModel(this, _dbContext);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in ShowViewBooks: {ex.Message}");
         }
     }
 
@@ -74,13 +67,11 @@ public partial class MainViewModel : ViewModelBase
     {
         try
         {
-            Console.WriteLine("ShowDefault command executed");
             CurrentViewModel = new HomeViewModel();
             ClearBookCover();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in ShowDefault: {ex.Message}");
         }
     }
 
@@ -88,14 +79,12 @@ public partial class MainViewModel : ViewModelBase
     {
         if (string.IsNullOrEmpty(coverUrl))
         {
-            Console.WriteLine("Cover URL is empty, not loading image");
             ClearBookCover();
             return;
         }
 
         try
         {
-            Console.WriteLine($"MainViewModel.LoadBookCoverAsync: Loading from URL: {coverUrl}");
             using var response = await _httpClient.GetAsync(coverUrl);
             response.EnsureSuccessStatusCode();
             using var stream = await response.Content.ReadAsStreamAsync();
@@ -106,12 +95,10 @@ public partial class MainViewModel : ViewModelBase
             {
                 BookCoverImage = bitmap;
                 IsBookCoverVisible = true;
-                Console.WriteLine("Cover image set and visible");
             });
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading image: {ex.Message}");
             await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ClearBookCover();
@@ -123,6 +110,5 @@ public partial class MainViewModel : ViewModelBase
     {
         BookCoverImage = null;
         IsBookCoverVisible = false;
-        Console.WriteLine("Book cover cleared");
     }
 }

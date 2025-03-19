@@ -51,24 +51,20 @@ namespace Goweli.ViewModels
 
         partial void OnSelectedBookChanged(Book? value)
         {
-            Console.WriteLine($"SelectedBook changed: {value?.BookTitle ?? "null"}");
 
             if (value != null)
             {
                 if (!string.IsNullOrEmpty(value.CoverUrl))
                 {
-                    Console.WriteLine($"Loading cover URL: {value.CoverUrl}");
                     LoadBookCover(value.CoverUrl);
                 }
                 else
                 {
-                    Console.WriteLine("No cover URL available, clearing cover");
                     _mainViewModel.ClearBookCover();
                 }
             }
             else
             {
-                Console.WriteLine("Selected book is null, clearing cover");
                 _mainViewModel.ClearBookCover();
             }
         }
@@ -77,25 +73,21 @@ namespace Goweli.ViewModels
         {
             try
             {
-                Console.WriteLine($"Loading book cover from URL: {coverUrl}");
 
                 Task.Run(async () =>
                 {
                     try
                     {
                         await _mainViewModel.LoadBookCoverAsync(coverUrl);
-                        Console.WriteLine("Book cover loaded successfully");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error in async book cover loading: {ex.Message}");
                         _mainViewModel.ClearBookCover();
                     }
                 });
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error initiating book cover load: {ex.Message}");
                 _mainViewModel.ClearBookCover();
             }
         }
@@ -109,7 +101,6 @@ namespace Goweli.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error loading books: {ex.Message}");
                 StatusMessage = "Error loading books. Using sample data instead.";
                 LoadSampleBooks();
             }
@@ -183,7 +174,6 @@ namespace Goweli.ViewModels
                 }
 
                 StatusMessage = $"Deleting '{SelectedBook.BookTitle}'";
-                Console.WriteLine($"Attempting to delete book: {SelectedBook.Id} - {SelectedBook.BookTitle}");
 
                 var bookToRemove = SelectedBook;
 
@@ -200,12 +190,10 @@ namespace Goweli.ViewModels
 
                     if (completedTask == saveTask)
                     {
-                        Console.WriteLine("Book deleted successfully from database");
                         StatusMessage = $"'{bookToRemove.BookTitle} deleted";
                     }
                     else
                     {
-                        Console.WriteLine("Database operation timed out");
                         StatusMessage = "Operation timed out, updating UI only";
 
                     }
@@ -214,7 +202,6 @@ namespace Goweli.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error deleting book: {ex.Message}");
                     StatusMessage = $"Error: {ex.Message}";
                 }
 
@@ -223,7 +210,6 @@ namespace Goweli.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Unhandled error in DeleteBook: {ex.Message}");
                 StatusMessage = "An error occurred";
                 await Task.Delay(2000);
                 StatusMessage = string.Empty;
@@ -249,7 +235,6 @@ namespace Goweli.ViewModels
                     return;
                 }
 
-                Console.WriteLine($"Starting edit for book: {SelectedBook.Id} - {SelectedBook.BookTitle}");
                 EditingBook = new Book
                 {
                     Id = SelectedBook.Id,
@@ -267,7 +252,6 @@ namespace Goweli.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error starting edit: {ex.Message}");
                 StatusMessage = $"Error: {ex.Message}";
                 Task.Run(async () =>
                 {
@@ -294,7 +278,6 @@ namespace Goweli.ViewModels
             try
             {
                 StatusMessage = "Saving changes...";
-                Console.WriteLine($"Saving changes to book: {EditingBook.Id} - {EditingBook.BookTitle}");
 
                 int index = Books.IndexOf(_originalState);
                 if (index >= 0)
@@ -321,25 +304,21 @@ namespace Goweli.ViewModels
 
                         if (completedTask == saveTask)
                         {
-                            Console.WriteLine("Book updated successfully in database");
                             StatusMessage = "Changes saved successfully";
                         }
                         else
                         {
-                            Console.WriteLine("Database update operation timed out");
-                            StatusMessage = "Database operation timed out, but UI updated";
+                            StatusMessage = "Database operation timed out";
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"Book with ID {EditingBook.Id} not found in database");
                         StatusMessage = "Book not found in database, but UI updated";
                     }
                 }
                 catch (Exception dbEx)
                 {
-                    Console.WriteLine($"Database error: {dbEx.Message}");
-                    StatusMessage = "Changes saved to UI only (database error)";
+                    StatusMessage = "Database error";
                 }
 
                 IsEditing = false;
@@ -348,8 +327,6 @@ namespace Goweli.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error saving book: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
                 StatusMessage = $"Error saving changes: {ex.Message}";
             }
 
@@ -362,7 +339,6 @@ namespace Goweli.ViewModels
         {
             try
             {
-                Console.WriteLine("Canceling edit");
                 EditingBook = null;
                 _originalState = null;
                 IsEditing = false;
@@ -379,7 +355,6 @@ namespace Goweli.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error canceling edit: {ex.Message}");
             }
         }
     }

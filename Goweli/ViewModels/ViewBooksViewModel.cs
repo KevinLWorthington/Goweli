@@ -22,8 +22,11 @@ namespace Goweli.ViewModels
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(MainViewModel));
+        }
 
-            LoadBooks();
+        public async Task InitializeAsync()
+        {
+            await LoadBooks();
         }
 
         // Observable properties for data binding
@@ -85,13 +88,13 @@ namespace Goweli.ViewModels
                     {
                         await _mainViewModel.LoadBookCoverAsync(coverUrl);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         _mainViewModel.ClearBookCover();
                     }
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 _mainViewModel.ClearBookCover();
             }
@@ -105,7 +108,7 @@ namespace Goweli.ViewModels
                 var books = await _dbContext.Books.ToListAsync();
                 Books = new ObservableCollection<Book>(books);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 StatusMessage = "Error loading books. Using sample data instead.";
                 LoadSampleBooks();
@@ -216,7 +219,7 @@ namespace Goweli.ViewModels
                 await Task.Delay(2000);
                 StatusMessage = string.Empty;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 StatusMessage = "An error occurred";
                 await Task.Delay(2000);
@@ -326,7 +329,7 @@ namespace Goweli.ViewModels
                         StatusMessage = "Book not found in database, but UI updated";
                     }
                 }
-                catch (Exception dbEx)
+                catch (Exception)
                 {
                     StatusMessage = "Database error";
                 }
@@ -348,8 +351,6 @@ namespace Goweli.ViewModels
         [RelayCommand]
         private void CancelEdit()
         {
-            try
-            {
                 EditingBook = null;
                 _originalState = null;
                 IsEditing = false;
@@ -363,10 +364,6 @@ namespace Goweli.ViewModels
                         StatusMessage = string.Empty;
                     });
                 });
-            }
-            catch (Exception ex)
-            {
-            }
         }
     }
 }

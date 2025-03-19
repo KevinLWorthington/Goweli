@@ -17,19 +17,11 @@ namespace Goweli
 
         public override void Initialize()
         {
-            try
-            {
-                AvaloniaXamlLoader.Load(this);
-            }
-            catch (Exception ex)
-            {
-            }
+                AvaloniaXamlLoader.Load(this);            
         }
 
         public override void OnFrameworkInitializationCompleted()
         {
-            try
-            {
 
                 // Register services
                 var services = new ServiceCollection();
@@ -55,17 +47,10 @@ namespace Goweli
                 }
 
                 base.OnFrameworkInitializationCompleted();
-            }
-            catch (Exception ex)
-            {
-                base.OnFrameworkInitializationCompleted();
-            }
         }
 
         private void RegisterServices(IServiceCollection services)
         {
-            try
-            {
                 // Register database services
                 services.AddSingleton<IDatabaseService, DatabaseService>();
 
@@ -73,16 +58,10 @@ namespace Goweli
                 services.AddDbContext<GoweliDbContext>(options =>
                     options.UseSqlite("Data Source=file:goweli.db?mode=memory&cache=shared"));
 
-            }
-            catch (Exception ex)
-            {
-            }
         }
 
         private async void InitializeDatabaseAsync()
         {
-            try
-            {
 
                 var dbContext = ServiceProvider?.GetRequiredService<GoweliDbContext>();
                 if (dbContext != null)
@@ -91,18 +70,9 @@ namespace Goweli
                     bool created = await dbContext.Database.EnsureCreatedAsync();
 
                     // Verify we can access the Books table
-                    try
-                    {
-                        var count = await dbContext.Books.CountAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-            }
+                    
+                        var count = await dbContext.Books.CountAsync();                    
+                }            
         }
     }
 }

@@ -17,7 +17,7 @@ internal class Program
                 .UseReactiveUI()
                 .StartBrowserAppAsync("out");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }

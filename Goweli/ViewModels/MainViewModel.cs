@@ -19,6 +19,9 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isBookCoverVisible;
+
+    [ObservableProperty]
+    private bool _isMenuVisible;
         
     private readonly HttpClient _httpClient;
     private readonly GoweliDbContext _dbContext;
@@ -35,7 +38,7 @@ public partial class MainViewModel : ViewModelBase
             IsBookCoverVisible = false; // Start with cover hidden
             ShowDefault();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
         }
     }
@@ -44,38 +47,20 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     private void ShowAddBookView()
     {
-        try
-        {
-            CurrentViewModel = new AddBookViewModel(this, _dbContext);
-        }
-        catch (Exception ex)
-        {
-        }
+        CurrentViewModel = new AddBookViewModel(this, _dbContext);        
     }
 
     [RelayCommand]
     private void ShowViewBooks()
     {
-        try
-        {
             CurrentViewModel = new ViewBooksViewModel(this, _dbContext);
-        }
-        catch (Exception ex)
-        {
-        }
     }
 
     [RelayCommand]
     private void ShowDefault()
     {
-        try
-        {
             CurrentViewModel = new HomeViewModel();
             ClearBookCover();
-        }
-        catch (Exception ex)
-        {
-        }
     }
 
     // Method to load the book cover
@@ -101,7 +86,7 @@ public partial class MainViewModel : ViewModelBase
                 IsBookCoverVisible = true;
             });
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -115,5 +100,13 @@ public partial class MainViewModel : ViewModelBase
     {
         BookCoverImage = null;
         IsBookCoverVisible = false;
+    }
+
+    [RelayCommand]
+    private void ToggleMenu()
+    {
+        {
+            IsMenuVisible = !IsMenuVisible;
+        }
     }
 }

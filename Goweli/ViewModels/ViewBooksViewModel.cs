@@ -22,11 +22,8 @@ namespace Goweli.ViewModels
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(MainViewModel));
-        }
 
-        public async Task InitializeAsync()
-        {
-            await LoadBooks();
+            LoadBooks();
         }
 
         // Observable properties for data binding

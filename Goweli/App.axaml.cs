@@ -56,7 +56,7 @@ namespace Goweli
 
                 // Register GoweliDbContext
                 services.AddDbContext<GoweliDbContext>(options =>
-                    options.UseSqlite("Data Source=file:goweli.db?mode=memory&cache=shared"));
+                    options.UseSqlite("Data Source=file:goweli.db"));
 
         }
 

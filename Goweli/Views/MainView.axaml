@@ -31,10 +31,10 @@
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 <!-- Hide and show menu buttons -->
-		<Button Grid.Column="0" HorizontalAlignment="Left" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding !IsMenuVisible}">
+		<Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding !IsMenuVisible}">
 			<Label Classes="menu" Content="&#xEA1E;" />
 		</Button>
-		<Button Grid.Column="0" HorizontalAlignment="Left" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding IsMenuVisible}">
+		<Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding IsMenuVisible}">
 			<Label Classes="menu" Content="&#xEA1C;" />
 		</Button>
 

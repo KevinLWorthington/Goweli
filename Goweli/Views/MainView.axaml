@@ -31,37 +31,37 @@
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 <!-- Hide and show menu buttons -->
-		<Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding !IsMenuVisible}">
-			<Label Classes="menu" Content="&#xEA1E;" />
-		</Button>
-		<Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding IsMenuVisible}">
-			<Label Classes="menu" Content="&#xEA1C;" />
-		</Button>
+			<Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding !IsMenuVisible}">
+				<Label Classes="menu" Content="&#xEA1E;" />
+			</Button>
+			<Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding IsMenuVisible}">
+				<Label Classes="menu" Content="&#xEA1C;" />
+			</Button>
 
-		<!-- Left side navigation panel -->
-		<Grid Grid.Column="0" RowDefinitions="*, Auto" IsVisible="{Binding IsMenuVisible}">
-			<StackPanel Grid.Row="0" Spacing="12">
-				<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}">
-					<Image Source="/Assets/Images/Icon.png" Width="90" />
-				</Button>
-				<!-- Side menu buttons with command bindings -->
-				<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ShowViewBooksCommand}">
-					<StackPanel Orientation="Horizontal">
-						<Label Classes="icon" Content="&#xE758;" />
-						<Label Content="VIEW BOOKS" />
-					</StackPanel>
-				</Button>
-				<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ShowAddBookViewCommand}">
-					<StackPanel Orientation="Horizontal">
-						<Label Classes="icon" Content="&#xE3D6;" />
-						<Label Content="ADD A BOOK" />
-					</StackPanel>
-				</Button>
-				<Border IsVisible="{Binding IsBookCoverVisible}" Margin="10">
-					<Image Source="{Binding BookCoverImage}" Stretch="Uniform" />
-				</Border>
-			</StackPanel>
-		</Grid>
+			<!-- Left side navigation panel -->
+			<Grid Grid.Column="0" RowDefinitions="*, Auto" IsVisible="{Binding IsMenuVisible}">
+				<StackPanel Grid.Row="0" Spacing="12">
+					<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}">
+						<Image Source="/Assets/Images/Icon.png" Width="90" />
+					</Button>
+					<!-- Side menu buttons with command bindings -->
+					<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ShowViewBooksCommand}">
+						<StackPanel Orientation="Horizontal">
+							<Label Classes="icon" Content="&#xE758;" />
+							<Label Content="VIEW BOOKS" />
+						</StackPanel>
+					</Button>
+					<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ShowAddBookViewCommand}">
+						<StackPanel Orientation="Horizontal">
+							<Label Classes="icon" Content="&#xE3D6;" />
+							<Label Content="ADD A BOOK" />
+						</StackPanel>
+					</Button>
+					<Border IsVisible="{Binding IsBookCoverVisible}" Margin="10">
+						<Image Source="{Binding BookCoverImage}" Stretch="Uniform" />
+					</Border>
+				</StackPanel>
+			</Grid>
 
 		<!-- Main content area -->
 		<ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}" />

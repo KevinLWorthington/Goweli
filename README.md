@@ -124,7 +124,7 @@ The application will automatically create and initialize the SQLite database on 
 - [Avalonia UI](https://avaloniaui.net/) for the cross-platform UI framework
 - [Akira Expanded Font](https://www.dafont.com/akira-expanded.font/) for the main font (demo version)
 - [Phosphor Icons](https://phosphoricons.com/) for the menu button icons
-- [Jothsa the Flexboxer at CopePen](https://codepen.io/Jothsa-the-flexboxer/pen/jOXbzod/) for the loading animation
+- [Jothsa the Flexboxer at CodePen](https://codepen.io/Jothsa-the-flexboxer/pen/jOXbzod/) for the loading animation
 - [AngelSix on Youtube](https://www.youtube.com/@AngelSix/) for the AvaloniaUI tutorial
 - [Code:You](https://code-you.org/) program for the opportunity to build this capstone project
 

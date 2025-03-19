@@ -4,7 +4,14 @@
 
 ## 📚 Project Overview
 
-Goweli is a web-based book collection management application built with AvaloniaUI and .NET 9.0. It allows users to maintain a personal library by adding, viewing, editing, and deleting books. The application fetches book cover images from the Open Library API, stores book data in a SQLite database, and provides an intuitive interface for managing your reading collection.
+Goweli is a personal web-based book collection management application built with AvaloniaUI and .NET 9.0.
+It allows me to maintain a personal library by adding, viewing, editing, and deleting books. The application
+fetches book cover images from the Open Library API, stores book data in a SQLite database, and provides an
+intuitive interface for managing your reading collection.
+
+## 🎏 Project Goals
+
+The goal of the project was to demonstrate a basic knowledge of C# and Object Oriented Programming.
 
 ## ✨ Features
 
@@ -131,11 +138,13 @@ The application will automatically create and initialize the SQLite database on 
 ## AI and it's use in the project
 
 The phrase "don't trust the AI" was ever present in the development of this project. I found it both helpful and frustrating.
-I found the use of AI was most helpful in finding and explaining errors that I just couldn't see. If I found myself stuck
+AI was most helpful in finding and explaining errors that I just couldn't see. If I found myself stuck
 on a problem, I could utilize multiple AI programs to help solve that problem. By using multiple AI models and cross-
-referencing the answers with documentation and results from online searches, I was often able to solve the issues I faced.
+referencing the answers with documentation and results from online sources, I was often able to solve the issues I faced.
 What frustrated me the most about the AI was the integration into Visual Studio. Often it would auto-complete a line of code
-that I wouldn't catch and I would be chasing an error that I didn't realize I made.
+that I wouldn't catch and I would be chasing an error that I didn't realize I made. In the end, however, I think AI was a big
+help overall. Because of an increase in workload at my full-time job, I wasn't able to put as much time and focus into my project
+as I had originally intended.
 
 ## What would I have done differently?
 

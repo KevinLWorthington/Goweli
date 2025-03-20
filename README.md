@@ -26,8 +26,7 @@ The goal of the project was to demonstrate a basic knowledge of C# and Object Or
 ## 🔍 Code:You Capstone Requirements Met
 
 1. **API Integration** ✓
-   - Integrates with the Open Library API to fetch book cover images
-   - Uses HTTP client to make API requests and handle responses
+   - Uses a proxy API to integrate with the Open Library API to fetch book cover images
 
 2. **Database Interaction (SQLite)** ✓
    - Implements Entity Framework Core with SQLite database

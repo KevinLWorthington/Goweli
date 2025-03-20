@@ -136,11 +136,11 @@ page when the GoweliProxyAPI project is started.
 - [Phosphor Icons](https://phosphoricons.com/) for the menu button icons
 - [Jothsa the Flexboxer at CodePen](https://codepen.io/Jothsa-the-flexboxer/pen/jOXbzod/) for the loading animation
 - [AngelSix on Youtube](https://www.youtube.com/@AngelSix/) for the AvaloniaUI tutorial
-- [Code:You](https://code-you.org/) program for the opportunity to build this capstone project
+- [Code:You](https://code-you.org/) program for the opportunity to build this capstone project and the resources and guidance
 
 ## AI and it's use in the project
 
-The phrase "don't trust the AI" was ever present in the development of this project. I found it both helpful and frustrating.
+The phrase "don't trust the AI" (Thanks, Chris!) was ever present in the development of this project. I found it both helpful and frustrating.
 AI was most helpful in finding and explaining errors that I just couldn't see. If I found myself stuck
 on a problem, I could utilize multiple AI programs to help solve that problem. By using multiple AI models and cross-
 referencing the answers with documentation and results from online sources, I was often able to solve the issues I faced.
@@ -148,6 +148,10 @@ What frustrated me the most about the AI was the integration into Visual Studio.
 that I wouldn't catch and I would be chasing an error that I didn't realize I made. In the end, however, I think AI was a big
 help overall. Because of an increase in workload at my full-time job, I wasn't able to put as much time and focus into my project
 as I had originally intended.
+
+Claude.ai was very helpful in creating this README.md file. You can link to your GitHub repo and ask the AI to create a visually appealing
+readme and give it the basic info you'd like to have. Then go through and edit/add the info you need. It really helps if you're not
+good at visual design, and I'm not at all.
 
 ## What would I have done differently?
 

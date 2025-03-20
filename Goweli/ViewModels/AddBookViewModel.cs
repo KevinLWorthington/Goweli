@@ -15,6 +15,7 @@ namespace Goweli.ViewModels
 {
     public partial class AddBookViewModel : ViewModelBase
     {
+        // Dependency injections fields
         private readonly MainViewModel _mainViewModel;
         private readonly GoweliDbContext _dbContext;
         private readonly HttpClient _apiClient;
@@ -80,15 +81,17 @@ namespace Goweli.ViewModels
                 var requestUrl = $"{_apiBaseUrl}/covers?title={Uri.EscapeDataString(title)}";
                 var response = await _apiClient.GetAsync(requestUrl);
 
+                // Update user if there's an error with the API
                 if (!response.IsSuccessStatusCode)
                 {
                     StatusMessage = $"Failed to find covers for this book. Status: {response.StatusCode}";
                     return null;
                 }
 
+                // Get a list of covers to be loaded for the user to select from
                 _coverSources = await response.Content.ReadFromJsonAsync<List<CoverSource>>() ?? new List<CoverSource>();
 
-                if (_coverSources.Count == 0)
+                if (_coverSources.Count == 0) // If there's no covers available, notify the user and set the cover to null
                 {
                     StatusMessage = "No covers found for this book.";
                     return null;
@@ -125,7 +128,7 @@ namespace Goweli.ViewModels
 
             try
             {
-                IsProcessingCovers = true;
+                IsProcessingCovers = true; // Called from the view to update the UI
                 var coverSource = _coverSources[_currentCoverIndex];
                 string coverUrl = coverSource.Url;
 
@@ -158,7 +161,7 @@ namespace Goweli.ViewModels
                 PreviewCoverImage = new Bitmap(memoryStream);
                 PreviewCoverUrl = coverUrl;
 
-                IsPreviewVisible = true;
+                IsPreviewVisible = true; // Update the UI to show the cover
             }
             catch (Exception ex)
             {
@@ -179,6 +182,7 @@ namespace Goweli.ViewModels
         {
             try
             {
+                // If the user has not entered a title and/or author, remind them to do so
                 if (string.IsNullOrWhiteSpace(BookTitle) || string.IsNullOrWhiteSpace(AuthorName))
                 {
                     StatusMessage = "Error: Author and Title are required.";
@@ -187,12 +191,12 @@ namespace Goweli.ViewModels
                     return;
                 }
 
-                StatusMessage = "Searching for book cover...";
+                StatusMessage = "Searching for book cover..."; // Show that we're searching for a cover image
 
                 // Get cover URL and wait for user selection
                 string? coverUrl = await GetBookCoverUrlAsync(BookTitle);
 
-                // Use the selected cover URL (may be null if user rejected all covers)
+                // Use the selected cover URL and set all book info to the database (cover may be null if user rejected all covers)
                 var newBook = new Book
                 {
                     BookTitle = this.BookTitle,
@@ -231,7 +235,7 @@ namespace Goweli.ViewModels
         private void AcceptCover()
         {
             _validatedCoverUrl = PreviewCoverUrl;
-            IsPreviewVisible = false;
+            IsPreviewVisible = false; // Reset UI
             _userDecisionTcs?.TrySetResult(true);
         }
 

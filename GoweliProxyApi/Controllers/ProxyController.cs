@@ -7,13 +7,15 @@ namespace Goweli.Server.Controllers
     [Route("api/[controller]")]
     public class ProxyController : ControllerBase
     {
+        // Dependency injection fields
         private readonly HttpClient _httpClient;
         private readonly ILogger<ProxyController> _logger;
 
+        // Constructor for dependency injection
         public ProxyController(IHttpClientFactory httpClientFactory, ILogger<ProxyController> logger)
         {
-            _httpClient = httpClientFactory.CreateClient("OpenLibraryClient");
-            _httpClient.Timeout = TimeSpan.FromSeconds(15);
+            _httpClient = httpClientFactory.CreateClient("OpenLibraryClient"); // Create new client to communicate with Open Library
+            _httpClient.Timeout = TimeSpan.FromSeconds(15); // Timeout the request if it takes too long
             // Request headers not needed
            // _httpClient.DefaultRequestHeaders.Add("User-Agent", "Goweli Book Application/1.0");
             _logger = logger;
@@ -27,8 +29,9 @@ namespace Goweli.Server.Controllers
                 _logger.LogInformation($"Searching for book with title: {title}");
 
                 var response = await _httpClient.GetAsync(
-                    $"https://openlibrary.org/search.json?title={Uri.EscapeDataString(title)}&limit={limit}");
+                    $"https://openlibrary.org/search.json?title={Uri.EscapeDataString(title)}&limit={limit}"); // Use Uri.EscapeDataString to add URL encoding
 
+                // Check if the communication with the API was successful
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogError($"OpenLibrary API returned status: {response.StatusCode}");
@@ -52,13 +55,14 @@ namespace Goweli.Server.Controllers
             {
                 _logger.LogInformation($"Searching for book covers with title: {title}");
 
-                // Search for the book title in Open Library API using OpenLibraryNET library
+                // Search for the book title using OLSearchLoader from OpenLibrary.NET library
                 var searchResults = await OLSearchLoader.GetSearchResultsAsync(
                     _httpClient,
                     title,
-                    new KeyValuePair<string, string>("limit", "20")
+                    new KeyValuePair<string, string>("limit", "20") // Limit to 20 results (user should find a cover within 20 results, hopefully)
                 );
 
+                // If no covers found, return a 404
                 if (searchResults == null || searchResults.Length == 0)
                 {
                     return NotFound("No book covers found");
@@ -66,11 +70,13 @@ namespace Goweli.Server.Controllers
 
                 // Extract cover edition keys and cover IDs
                 // Cover IDs are used when cover_edition_key is not available
+                // This was a bug found when entering lesser known book
+                // Some books do not have a cover_edition_key and instead only use a cover_i
                 var coverSources = new List<CoverSource>();
 
                 foreach (var result in searchResults)
                 {
-                    // Check for cover_edition_key
+                    // Check for cover_edition_key and construct URL
                     if (result.ExtensionData.TryGetValue("cover_edition_key", out var coverEditionKeyObj) &&
                         coverEditionKeyObj != null && !string.IsNullOrEmpty(coverEditionKeyObj.ToString()))
                     {
@@ -82,7 +88,7 @@ namespace Goweli.Server.Controllers
                             Url = $"https://covers.openlibrary.org/b/olid/{coverEditionKey}-M.jpg"
                         });
                     }
-                    // Check for cover_i (ID)
+                    // Check for cover_i (ID) and construct URL if no cover_edition_key is available
                     else if (result.ExtensionData.TryGetValue("cover_i", out var coverId) &&
                             coverId != null && !string.IsNullOrEmpty(coverId.ToString()))
                     {
@@ -113,6 +119,7 @@ namespace Goweli.Server.Controllers
         [HttpGet("validateCover")]
         public async Task<IActionResult> ValidateCover([FromQuery] string coverUrl)
         {
+            // Check to make sure the created URL actually contains data
             try
             {
                 _logger.LogInformation($"Validating cover URL: {coverUrl}");
@@ -125,7 +132,7 @@ namespace Goweli.Server.Controllers
                     return BadRequest("Invalid cover URL");
                 }
 
-                var imageBytes = await response.Content.ReadAsByteArrayAsync();
+                var imageBytes = await response.Content.ReadAsByteArrayAsync(); // Get the image bytes
 
                 // Check if the image is valid (some minimal size)
                 if (imageBytes.Length < 1000)
@@ -147,6 +154,7 @@ namespace Goweli.Server.Controllers
         [HttpGet("cover/{coverEditionKey}")]
         public async Task<IActionResult> GetCover(string coverEditionKey, [FromQuery] string size = "M")
         {
+            // Serve the cover with cover_edition_key
             try
             {
                 _logger.LogInformation($"Fetching cover for edition key: {coverEditionKey}");
@@ -179,6 +187,7 @@ namespace Goweli.Server.Controllers
         [HttpGet("coverById/{coverId}")]
         public async Task<IActionResult> GetCoverById(string coverId, [FromQuery] string size = "M")
         {
+            // Serve the cover with cover_i
             try
             {
                 _logger.LogInformation($"Fetching cover for ID: {coverId}");

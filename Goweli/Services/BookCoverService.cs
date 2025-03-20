@@ -7,6 +7,8 @@ using Avalonia.Media.Imaging;
 using OpenLibraryNET.Loader;
 using CommunityToolkit.Mvvm.ComponentModel;
 
+// This is not currently implemented. May be used in the future as a fallback if Proxy API fails
+
 namespace Goweli.Services
 {
     public class BookCoverService : ObservableObject

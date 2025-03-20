@@ -1,6 +1,4 @@
-﻿using Avalonia.Media;
-using Avalonia;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Goweli.Data;
@@ -24,7 +22,8 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isMenuVisible;
-        
+    
+    // Fields for dependency injection
     private readonly HttpClient _httpClient;
     private readonly GoweliDbContext _dbContext;
     private readonly IServiceProvider _serviceProvider;
@@ -34,9 +33,9 @@ public partial class MainViewModel : ViewModelBase
     {
         try
         {
-            _httpClient = new HttpClient();
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _httpClient = new HttpClient(); // Used to load image from URL stored in the database
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext)); // Load the database
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider)); 
             IsBookCoverVisible = false; // Start with cover hidden
             ShowDefault();
         }
@@ -74,6 +73,7 @@ public partial class MainViewModel : ViewModelBase
             return;
         }
 
+        // Initiate http connection and load book cover from url stored in database
         try
         {
             using var response = await _httpClient.GetAsync(coverUrl);
@@ -104,6 +104,7 @@ public partial class MainViewModel : ViewModelBase
         IsBookCoverVisible = false;
     }
 
+    // Method to toggle the menu
     [RelayCommand]
     private void ToggleMenu()
     {

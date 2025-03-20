@@ -52,9 +52,10 @@ namespace Goweli.ViewModels
             IsStatusVisible = !string.IsNullOrEmpty(value);
         }
 
+        // Method to watch for the user to select a book from the table
         partial void OnSelectedBookChanged(Book? value)
         {
-
+            // When user selects a book, load the book cover from the URL stored in the database
             if (value != null)
             {
                 if (!string.IsNullOrEmpty(value.CoverUrl))
@@ -72,7 +73,7 @@ namespace Goweli.ViewModels
             }
         }
 
-        // Method to load the book cover
+        // Method to load the book cover of the book the user has selected
         private void LoadBookCover(string coverUrl)
         {
             try
@@ -82,7 +83,7 @@ namespace Goweli.ViewModels
                 {
                     try
                     {
-                        await _mainViewModel.LoadBookCoverAsync(coverUrl);
+                        await _mainViewModel.LoadBookCoverAsync(coverUrl); // The book cover is shown on the side menu, which is located in the Main View Model
                     }
                     catch (Exception)
                     {
@@ -104,12 +105,15 @@ namespace Goweli.ViewModels
                 var books = await _dbContext.Books.ToListAsync();
                 Books = new ObservableCollection<Book>(books);
             }
+
+            // If an error occurs, call method to load sample books
             catch (Exception)
             {
                 StatusMessage = "Error loading books. Using sample data instead.";
                 LoadSampleBooks();
             }
-
+            
+            // If no books have been entered, call method to load sample books
             if (Books.Count == 0)
             {
                 StatusMessage = "No books found. Using sample data instead.";
@@ -153,7 +157,7 @@ namespace Goweli.ViewModels
             CoverUrl = "https://covers.openlibrary.org/b/olid/OL21733390M-M.jpg"
         }
     };
-
+            // Load the sample books into the database if none exist (can be deleted from the db later)
             if (_dbContext.Books.Count() == 0)
             {
                 foreach (var book in sampleBooks)
@@ -172,6 +176,7 @@ namespace Goweli.ViewModels
         {
             try
             {
+                // If the user has not selected a book, display a reminder
                 if (SelectedBook == null)
                 {
                     StatusMessage = "Please select a book";
@@ -179,7 +184,7 @@ namespace Goweli.ViewModels
                     StatusMessage = string.Empty;
                     return;
                 }
-
+                // Update UI to show the selected book is being deleted
                 StatusMessage = $"Deleting '{SelectedBook.BookTitle}'";
 
                 var bookToRemove = SelectedBook;
@@ -188,6 +193,8 @@ namespace Goweli.ViewModels
 
                 _mainViewModel.ClearBookCover();
 
+                // Remove the user selected book from the database and update the UI
+                // Will need confirmation implementation eventually
                 try
                 {
                     _dbContext.Books.Remove(bookToRemove);
@@ -229,6 +236,7 @@ namespace Goweli.ViewModels
         {
             try
             {
+                // Remind user to select a book before clicking edit button
                 if (SelectedBook == null)
                 {
                     StatusMessage = "Please select a book";
@@ -242,7 +250,7 @@ namespace Goweli.ViewModels
                     });
                     return;
                 }
-
+                // Load selected book into text input fields so they can be edited
                 EditingBook = new Book
                 {
                     Id = SelectedBook.Id,
@@ -255,7 +263,7 @@ namespace Goweli.ViewModels
                 };
 
                 _originalState = SelectedBook;
-                IsEditing = true;
+                IsEditing = true; // This is for updating the view model and is called in the axaml
                 StatusMessage = $"Editing '{SelectedBook.BookTitle}'";
             }
             catch (Exception ex)
@@ -295,7 +303,8 @@ namespace Goweli.ViewModels
                 }
 
                 SelectedBook = EditingBook;
-
+                
+                // Load the book being edited from the database
                 try
                 {
                     var entity = await _dbContext.Books.FindAsync(EditingBook.Id);
@@ -308,9 +317,11 @@ namespace Goweli.ViewModels
                         entity.Synopsis = EditingBook.Synopsis;
                         entity.CoverUrl = EditingBook.CoverUrl;
 
+                        // Save the changes to the database
                         var saveTask = _dbContext.SaveChangesAsync();
                         var completedTask = await Task.WhenAny(saveTask, Task.Delay(5000));
 
+                        // Notify user of success or failure
                         if (completedTask == saveTask)
                         {
                             StatusMessage = "Changes saved successfully";
@@ -330,6 +341,7 @@ namespace Goweli.ViewModels
                     StatusMessage = "Database error";
                 }
 
+                // Update UI and make set 
                 IsEditing = false;
                 EditingBook = null;
                 _originalState = null;
@@ -347,6 +359,7 @@ namespace Goweli.ViewModels
         [RelayCommand]
         private void CancelEdit()
         {
+            // Reset variables and UI states
                 EditingBook = null;
                 _originalState = null;
                 IsEditing = false;

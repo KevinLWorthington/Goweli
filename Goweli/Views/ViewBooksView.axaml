@@ -26,14 +26,14 @@
 					<DataGridTextColumn Header="Author" Binding="{Binding AuthorName}" Width="250"/>
 					<DataGridTextColumn Header="ISBN" Binding="{Binding ISBN}" Width="150"/>
 					<DataGridTextColumn Header="Synopsis" Binding="{Binding Synopsis}" Width="*" />
-					<DataGridCheckBoxColumn Header="Read" Binding="{Binding IsChecked}" Width="80"/>
+					<DataGridCheckBoxColumn Header="Read" Binding="{Binding IsChecked}" Width="90"/>
 				</DataGrid.Columns>
 			</DataGrid>
 
 
 		<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,10,0,0">
-			<Button Content="Edit" Command="{Binding EditBookCommand}" IsEnabled="{Binding SelectedBook, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-			<Button Content="Delete" Command="{Binding DeleteBookCommand}" IsEnabled="{Binding SelectedBook, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+			<Button Content="Edit" Command="{Binding EditBookCommand}" IsVisible="{Binding !IsEditing}" IsEnabled="{Binding SelectedBook, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+			<Button Content="Delete" Command="{Binding DeleteBookCommand}" IsVisible="{Binding !IsEditing}" IsEnabled="{Binding SelectedBook, Converter={x:Static ObjectConverters.IsNotNull}}"/>
 		</StackPanel>
 	</Grid>
 

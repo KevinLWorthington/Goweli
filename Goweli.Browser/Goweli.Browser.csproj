@@ -5,6 +5,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaXaml Remove="wwwroot\js\**" />
+    <Compile Remove="wwwroot\js\**" />
+    <Content Remove="wwwroot\js\**" />
+    <EmbeddedResource Remove="wwwroot\js\**" />
+    <None Remove="wwwroot\js\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Browser" />
@@ -21,9 +28,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Goweli\Goweli.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\js\" />
   </ItemGroup>
 </Project>

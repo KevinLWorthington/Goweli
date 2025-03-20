@@ -73,21 +73,25 @@ cd Goweli
 ### Build and Run the Project
 
 **Using Visual Studio**:
-1. Open the `Goweli.Browser.sln` solution file in Visual Studio
-2. Restore NuGet packages
-3. Build the solution
-4. Run the project (press F5 or click the run button)
-
-**Using .NET CLI**:
+1. Clone the project in Visual Studio or open the already cloned Goweli folder
+2. Ensure you have the lastest .NET 9 SDK installed
+3. In the console:
 ```bash
+dotnet workload install wasm-tools
 dotnet restore
 dotnet build
-dotnet run --project Goweli.Browser
 ```
+4. Make sure that the startup configuration is set to both Goweli.Browser and GoweliProxyAPI
 
 ### Database Setup
 
 The application will automatically create and initialize the SQLite database on first run. No additional setup is required.
+
+### API Testing
+
+If you would like to test the API without running the Goweli app, navigate to Goweli/GoweliProxyAPI/Properties. Open the
+launchSettings.json file and change the launchBrowser entry under "profiles" from 'false' to 'true'. This will open the Swagger
+page when the GoweliProxyAPI project is started.
 
 ## 📱 Screenshots
 

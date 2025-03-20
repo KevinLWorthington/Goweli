@@ -7,13 +7,14 @@ builder.Services.AddControllers();
 
 // Register the Swagger generator
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();  // This is the line that was likely missing
+builder.Services.AddSwaggerGen();
 
 // Configure the HTTP client
 builder.Services.AddHttpClient("OpenLibraryClient", client =>
 {
     client.Timeout = TimeSpan.FromSeconds(10);
-    client.DefaultRequestHeaders.Add("User-Agent", "Goweli Book Application/1.0");
+    //CORS headers (only required if app were in production and used by several users)
+    //client.DefaultRequestHeaders.Add("User-Agent", "Goweli Book Application/1.0");
 });
 
 // Configure CORS

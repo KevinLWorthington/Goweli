@@ -12,13 +12,17 @@ internal class Program
 
         try
         {
+            Console.WriteLine("Starting Goweli Browser application...");
+
             // Start the Avalonia application
             await BuildAvaloniaApp()
                 .UseReactiveUI()
                 .StartBrowserAppAsync("out");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            Console.WriteLine($"Error starting application: {ex.Message}");
+            Console.WriteLine(ex.StackTrace);
         }
     }
 

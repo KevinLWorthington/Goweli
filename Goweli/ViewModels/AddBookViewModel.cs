@@ -8,8 +8,8 @@ using System.Net.Http;
 using Avalonia.Media.Imaging;
 using System.IO;
 using System.Collections.ObjectModel;
-using OpenLibraryNET.Loader;
 using System.Collections.Generic;
+using System.Net.Http.Json;
 
 namespace Goweli.ViewModels
 {
@@ -17,12 +17,15 @@ namespace Goweli.ViewModels
     {
         private readonly MainViewModel _mainViewModel;
         private readonly GoweliDbContext _dbContext;
+        private readonly HttpClient _apiClient;
         private string? _validatedCoverUrl;
-        private readonly HttpClient _client;
         private int _currentCoverIndex = 0;
-        private List<string> _coverEditionKeys = new List<string>();
+        private List<CoverSource> _coverSources = new List<CoverSource>();
         private TaskCompletionSource<bool>? _userDecisionTcs;
-        
+
+        // Base URL for API. Replace with actual URL in production
+        private readonly string _apiBaseUrl = "http://localhost:5128/api/Proxy";
+
         public static ObservableCollection<Book> Books { get; } = new ObservableCollection<Book>();
 
         // Properties to be called from the view
@@ -57,67 +60,62 @@ namespace Goweli.ViewModels
         private bool _isProcessingCovers;
 
         // Constructor for dependency injection
-        public AddBookViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext)
+        public AddBookViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext, HttpClient apiClient = null)
         {
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _client = new HttpClient();
+
+            // Create a new HttpClient if not injected
+            _apiClient = apiClient ?? new HttpClient();
         }
 
-        // Method to get the book cover URL
+        // Method to get book covers from the API
         private async Task<string?> GetBookCoverUrlAsync(string title)
         {
-                _client.Timeout = TimeSpan.FromSeconds(15);
+            try
+            {
+                StatusMessage = "Searching for book covers...";
 
-                // Search for the book title in Open Library API using OpenLibraryNET
-                var searchResults = await OLSearchLoader.GetSearchResultsAsync(
-                    _client,
-                    title,
-                    new KeyValuePair<string, string>("limit", "20")
-                );
+                // Get cover sources from the API
+                var requestUrl = $"{_apiBaseUrl}/covers?title={Uri.EscapeDataString(title)}";
+                var response = await _apiClient.GetAsync(requestUrl);
 
-                if (searchResults == null || searchResults.Length == 0)
+                if (!response.IsSuccessStatusCode)
                 {
+                    StatusMessage = $"Failed to find covers for this book. Status: {response.StatusCode}";
                     return null;
                 }
 
-                _coverEditionKeys.Clear();
+                _coverSources = await response.Content.ReadFromJsonAsync<List<CoverSource>>() ?? new List<CoverSource>();
+
+                if (_coverSources.Count == 0)
+                {
+                    StatusMessage = "No covers found for this book.";
+                    return null;
+                }
+
                 _currentCoverIndex = 0;
-
-                foreach (var result in searchResults)
-                {
-                    if (result.ExtensionData.TryGetValue("cover_edition_key", out var coverEditionKeyObj) &&
-                        coverEditionKeyObj != null && !string.IsNullOrEmpty(coverEditionKeyObj.ToString()))
-                    {
-                        string coverEditionKey = coverEditionKeyObj.ToString();
-                        _coverEditionKeys.Add(coverEditionKey);
-                    }
-                    else if (result.ExtensionData.TryGetValue("cover_i", out var coverId) &&
-                            coverId != null && !string.IsNullOrEmpty(coverId.ToString()))
-                    {
-                        string coverIdKey = coverId.ToString();
-                        _coverEditionKeys.Add("ID:" + coverIdKey);
-                    }
-                }
-
-
-                if (_coverEditionKeys.Count == 0)
-                {
-                    return null;
-                }
-
                 await DisplayCoverAtCurrentIndexAsync();
 
+                // Create a new TaskCompletionSource to wait for user's decision
                 _userDecisionTcs = new TaskCompletionSource<bool>();
+
+                // Wait for the user to make a decision
                 await _userDecisionTcs.Task;
 
-                return _validatedCoverUrl;            
+                return _validatedCoverUrl;
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Error searching for covers: {ex.Message}";
+                return null;
+            }
         }
 
         // Method to display the book cover
         private async Task DisplayCoverAtCurrentIndexAsync()
         {
-            if (_currentCoverIndex >= _coverEditionKeys.Count)
+            if (_currentCoverIndex >= _coverSources.Count)
             {
                 _validatedCoverUrl = null;
                 IsPreviewVisible = false;
@@ -128,42 +126,44 @@ namespace Goweli.ViewModels
             try
             {
                 IsProcessingCovers = true;
-                string coverEditionKey = _coverEditionKeys[_currentCoverIndex];
+                var coverSource = _coverSources[_currentCoverIndex];
+                string coverUrl = coverSource.Url;
 
-                // Generate the cover URL based on the cover edition key or cover ID in the search results
-                string coverUrl;
-                                
-                if (coverEditionKey.StartsWith("ID:"))
+                // Validate the cover URL using the API
+                var validateUrl = $"{_apiBaseUrl}/validateCover?coverUrl={Uri.EscapeDataString(coverUrl)}";
+                var validateResponse = await _apiClient.GetAsync(validateUrl);
+
+                if (!validateResponse.IsSuccessStatusCode)
                 {
-                    string coverId = coverEditionKey.Substring(3);
-                    coverUrl = $"https://covers.openlibrary.org/b/id/{coverId}-M.jpg";
-                }
-                else
-                {
-                    coverUrl = $"https://covers.openlibrary.org/b/olid/{coverEditionKey}-M.jpg";
-                }
-
-
-                var imageResponse = await _client.GetByteArrayAsync(coverUrl);
-
-                if (imageResponse.Length < 1000)
-                {
+                    // Move to the next cover if this one is invalid
+                    StatusMessage = $"Cover {_currentCoverIndex + 1} is invalid, trying next...";
                     _currentCoverIndex++;
                     await DisplayCoverAtCurrentIndexAsync();
                     return;
                 }
+
+                // Get the image bytes from the response
+                var responseContent = await validateResponse.Content.ReadFromJsonAsync<ValidateCoverResponse>();
+
+                if (responseContent == null || !responseContent.IsValid || responseContent.ImageBytes.Length < 1000)
+                {
+                    // Move to the next cover if this one is invalid
+                    _currentCoverIndex++;
+                    await DisplayCoverAtCurrentIndexAsync();
+                    return;
+                }
+
                 // Load the cover image in memory
-                using var memoryStream = new MemoryStream(imageResponse);
+                using var memoryStream = new MemoryStream(responseContent.ImageBytes);
                 PreviewCoverImage = new Bitmap(memoryStream);
                 PreviewCoverUrl = coverUrl;
 
                 IsPreviewVisible = true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                StatusMessage = $"Error loading cover: {ex.Message}";
                 await Task.Delay(500);
-
                 _currentCoverIndex++;
                 await DisplayCoverAtCurrentIndexAsync();
             }
@@ -189,8 +189,10 @@ namespace Goweli.ViewModels
 
                 StatusMessage = "Searching for book cover...";
 
-                await GetBookCoverUrlAsync(BookTitle);
+                // Get cover URL and wait for user selection
+                string? coverUrl = await GetBookCoverUrlAsync(BookTitle);
 
+                // Use the selected cover URL (may be null if user rejected all covers)
                 var newBook = new Book
                 {
                     BookTitle = this.BookTitle,
@@ -198,7 +200,7 @@ namespace Goweli.ViewModels
                     ISBN = this.ISBN,
                     Synopsis = this.Synopsis,
                     IsChecked = this.IsChecked,
-                    CoverUrl = _validatedCoverUrl
+                    CoverUrl = coverUrl  // This will be the URL the user selected or null
                 };
 
                 _dbContext.Books.Add(newBook);
@@ -212,12 +214,12 @@ namespace Goweli.ViewModels
                 ISBN = string.Empty;
                 Synopsis = string.Empty;
                 IsChecked = false;
+                _validatedCoverUrl = null;
 
                 StatusMessage = string.Empty;
             }
             catch (Exception ex)
             {
-
                 StatusMessage = $"Error: {ex.Message}";
                 await Task.Delay(2000);
                 StatusMessage = string.Empty;
@@ -238,7 +240,7 @@ namespace Goweli.ViewModels
         private async Task RejectCover()
         {
             _currentCoverIndex++;
-            if (_currentCoverIndex < _coverEditionKeys.Count)
+            if (_currentCoverIndex < _coverSources.Count)
             {
                 StatusMessage = "Loading next cover...";
                 await DisplayCoverAtCurrentIndexAsync();
@@ -252,6 +254,18 @@ namespace Goweli.ViewModels
             }
         }
     }
+
+    // Helper classes for JSON deserialization
+    public class CoverSource
+    {
+        public string Type { get; set; } // "olid" or "id"
+        public string Key { get; set; }
+        public string Url { get; set; }
+    }
+
+    public class ValidateCoverResponse
+    {
+        public bool IsValid { get; set; }
+        public byte[] ImageBytes { get; set; }
+    }
 }
-
-

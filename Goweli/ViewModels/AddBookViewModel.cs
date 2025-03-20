@@ -20,7 +20,7 @@ namespace Goweli.ViewModels
         private readonly GoweliDbContext _dbContext;
         private readonly HttpClient _apiClient;
         private string? _validatedCoverUrl;
-        private int _currentCoverIndex = 0;
+        private int _currentCoverIndex = 0; // Index of book covers to be cycled through (should start at 0)
         private List<CoverSource> _coverSources = new List<CoverSource>();
         private TaskCompletionSource<bool>? _userDecisionTcs;
 
@@ -97,7 +97,6 @@ namespace Goweli.ViewModels
                     return null;
                 }
 
-                _currentCoverIndex = 0;
                 await DisplayCoverAtCurrentIndexAsync();
 
                 // Create a new TaskCompletionSource to wait for user's decision
@@ -106,6 +105,7 @@ namespace Goweli.ViewModels
                 // Wait for the user to make a decision
                 await _userDecisionTcs.Task;
 
+                // Once the user has made a decision, return the validated cover URL to be stored (or null if no cover chosen)
                 return _validatedCoverUrl;
             }
             catch (Exception ex)
@@ -128,7 +128,7 @@ namespace Goweli.ViewModels
 
             try
             {
-                IsProcessingCovers = true; // Called from the view to update the UI
+                IsProcessingCovers = true; // Bound in the view to update the UI
                 var coverSource = _coverSources[_currentCoverIndex];
                 string coverUrl = coverSource.Url;
 
@@ -140,7 +140,7 @@ namespace Goweli.ViewModels
                 {
                     // Move to the next cover if this one is invalid
                     StatusMessage = $"Cover {_currentCoverIndex + 1} is invalid, trying next...";
-                    _currentCoverIndex++;
+                    _currentCoverIndex++; // Move to the next cover
                     await DisplayCoverAtCurrentIndexAsync();
                     return;
                 }
@@ -161,7 +161,7 @@ namespace Goweli.ViewModels
                 PreviewCoverImage = new Bitmap(memoryStream);
                 PreviewCoverUrl = coverUrl;
 
-                IsPreviewVisible = true; // Update the UI to show the cover
+                IsPreviewVisible = true; // Bound in the view to update the UI
             }
             catch (Exception ex)
             {
@@ -234,7 +234,7 @@ namespace Goweli.ViewModels
         [RelayCommand]
         private void AcceptCover()
         {
-            _validatedCoverUrl = PreviewCoverUrl;
+            _validatedCoverUrl = PreviewCoverUrl; // Set the validated cover URL to the preview that the user accepted
             IsPreviewVisible = false; // Reset UI
             _userDecisionTcs?.TrySetResult(true);
         }
@@ -262,14 +262,14 @@ namespace Goweli.ViewModels
     // Helper classes for JSON deserialization
     public class CoverSource
     {
-        public string Type { get; set; } // "olid" or "id"
-        public string Key { get; set; }
-        public string Url { get; set; }
+        public string? Type { get; set; } // "olid" or "id"
+        public string? Key { get; set; }
+        public string? Url { get; set; }
     }
 
     public class ValidateCoverResponse
     {
         public bool IsValid { get; set; }
-        public byte[] ImageBytes { get; set; }
+        public byte[]? ImageBytes { get; set; }
     }
 }

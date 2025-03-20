@@ -110,6 +110,8 @@ page when the GoweliProxyAPI project is started.
 
 - **Goweli.Browser**: WebAssembly project for running in the browser
 
+- **GoweliProxyAPI**: Proxy API project operating between the Goweli app and the Open Library API
+
 ## 💡 Future Enhancements
 
 - Book categorization and tagging

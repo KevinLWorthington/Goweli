@@ -83,6 +83,12 @@ dotnet build
 ```
 4. Make sure that the startup configuration is set to both Goweli.Browser and GoweliProxyAPI
 
+The commands may need to be run more than once before they work.
+It never hurts to run
+```bash
+dotnet clean
+```
+
 ### Database Setup
 
 The application will automatically create and initialize the SQLite database on first run. No additional setup is required.

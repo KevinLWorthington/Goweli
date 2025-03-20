@@ -66,7 +66,7 @@ The goal of the project was to demonstrate a basic knowledge of C# and Object Or
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/Goweli.git
+git clone https://github.com/kevinlworthington/Goweli.git
 cd Goweli
 ```
 

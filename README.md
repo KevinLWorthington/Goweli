@@ -54,7 +54,7 @@ The goal of the project was to demonstrate a basic knowledge of C# and Object Or
 - **Entity Framework Core**: ORM for database interactions
 - **SQLite**: Lightweight database engine
 - **OpenLibrary.NET**: Client library for Open Library API
-- **CommunityToolkit.Mvvm**: MVVM toolkit for UI architecture
+- **CommunityToolkit.Mvvm**: MVVM (Model, View, ViewModel) toolkit for UI architecture
 
 ## 📋 Prerequisites
 

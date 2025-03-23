@@ -1,0 +1,109 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Goweli.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Goweli.Views.DataBackupView"
+             x:DataType="vm:DataBackupViewModel">
+	<ScrollViewer>
+		<Grid RowDefinitions="Auto,*,Auto" Margin="20" VerticalAlignment="Center">
+			<TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="Backup and Restore" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+
+			<StackPanel Grid.Row="1" Spacing="30" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<!-- Library Summary Section -->
+				<Border Background="#24424d" CornerRadius="8" Padding="20">
+					<StackPanel Spacing="15">
+						<TextBlock Text="Your Library Summary" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+
+						<StackPanel Orientation="Horizontal" Spacing="15" HorizontalAlignment="Center">
+							<TextBlock Text="{Binding AllBooks.Count, StringFormat='Total Books: {0}'}" FontWeight="Bold"/>
+						</StackPanel>
+
+						<Button Command="{Binding ToggleAdvancedInfoCommand}" HorizontalAlignment="Center" Content="{Binding AdvancedInfoButtonText}"/>
+
+						<!-- Advanced Info (collapsible) -->
+						<DataGrid IsVisible="{Binding ShowAdvancedInfo}"
+                                  ItemsSource="{Binding AllBooks}"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                  MaxHeight="300"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Auto">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="Title" Binding="{Binding BookTitle}" Width="300"/>
+								<DataGridTextColumn Header="Author" Binding="{Binding AuthorName}" Width="200"/>
+								<DataGridTextColumn Header="ISBN" Binding="{Binding ISBN}" Width="150"/>
+								<DataGridCheckBoxColumn Header="Read" Binding="{Binding IsChecked}" Width="80"/>
+							</DataGrid.Columns>
+						</DataGrid>
+					</StackPanel>
+				</Border>
+
+				<!-- Export Data Section -->
+				<Border Background="#24424d" CornerRadius="8" Padding="20">
+					<StackPanel Spacing="15">
+						<TextBlock Text="Backup Your Library" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+						<TextBlock TextWrapping="Wrap" MaxWidth="500">
+							Export your entire book collection as JSON data. This allows you to back up your data or transfer it to another device.
+						</TextBlock>
+
+						<!-- Export Button -->
+						<Button Command="{Binding PrepareExportCommand}" Content="PREPARE BACKUP" HorizontalAlignment="Center" Width="250" HorizontalContentAlignment="Center"
+                                IsVisible="{Binding !ShowExportData}">
+						</Button>
+
+						<!-- Export JSON Data Display -->
+						<Grid IsVisible="{Binding ShowExportData}" RowDefinitions="Auto,*,Auto">
+							<TextBlock Grid.Row="0" Text="Copy this JSON data and save it to a file with a .json extension:" Margin="0,0,0,5"/>
+							<TextBox Grid.Row="1" Name="ExportJsonTextBox" Text="{Binding ExportedJson}" IsReadOnly="True" Height="200" AcceptsReturn="True"
+                                     TextWrapping="NoWrap"/>
+							<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,5,0,0">
+								<Button Command="{Binding HideExportCommand}" Content="CLOSE" />
+								<Button Content="SELECT ALL" Name="SelectAllButton" />
+							</StackPanel>
+						</Grid>
+					</StackPanel>
+				</Border>
+
+				<!-- Import Data Section -->
+				<Border Background="#24424d" CornerRadius="8" Padding="20">
+					<StackPanel Spacing="15">
+						<TextBlock Text="Restore Your Library" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+						<TextBlock TextWrapping="Wrap" MaxWidth="500">
+							Import previously exported JSON data to restore your book collection. Paste the JSON data below to import.
+						</TextBlock>
+
+						<TextBox Text="{Binding ImportJson}" Height="200" AcceptsReturn="True" Watermark="Paste your JSON data here..."
+                                 TextWrapping="NoWrap"/>
+
+						<Button Command="{Binding ImportDataCommand}" HorizontalAlignment="Center" Width="200" Content="Import Books" HorizontalContentAlignment="Center">
+						</Button>
+					</StackPanel>
+				</Border>
+
+				<!-- Status Message -->
+				<TextBlock Text="{Binding StatusMessage}"
+                           IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                           HorizontalAlignment="Center"
+                           Foreground="White"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap"
+                           MaxWidth="500"/>
+
+				<!-- Processing Indicator -->
+				<ProgressBar IsIndeterminate="True"
+                             IsVisible="{Binding IsProcessing}"
+                             Width="300"
+                             Height="4"/>
+
+				<!-- Import Success Message -->
+				<TextBlock Text="{Binding ImportedCount, StringFormat='{}{0} books imported successfully!'}"
+                           IsVisible="{Binding ImportSuccessful}"
+                           HorizontalAlignment="Center"
+                           Foreground="#90EE90"
+                           FontWeight="Bold"/>
+			</StackPanel>
+		</Grid>
+	</ScrollViewer>
+</UserControl>

@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Goweli.Data;
+using Goweli.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -68,6 +70,12 @@ public partial class MainViewModel : ViewModelBase
     private void ShowSearchView()
     {
         CurrentViewModel = new SearchViewModel(this, _dbContext);
+    }
+
+    [RelayCommand]
+    private void ShowDataBackupView()
+    {
+        CurrentViewModel = new DataBackupViewModel(_dbContext, this);
     }
 
     // Method to load the book cover

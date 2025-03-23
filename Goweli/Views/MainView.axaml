@@ -25,6 +25,9 @@
 		<DataTemplate DataType="vm:SearchViewModel">
 			<view:SearchView />
 		</DataTemplate>
+		<DataTemplate DataType="vm:DataBackupViewModel">
+			<view:DataBackupView />
+		</DataTemplate>
 	</UserControl.DataTemplates>
 
 	<!-- Background set from App.axaml and setting up the application grid -->
@@ -70,6 +73,13 @@
 						<StackPanel Orientation="Horizontal">
 							<Label Classes="icon" Content="&#xEA64;" />
 							<Label Content="Search" />
+						</StackPanel>
+					</Button>
+					<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ShowDataBackupViewCommand}"
+        ToolTip.Tip="Backup/Restore">
+						<StackPanel Orientation="Horizontal">
+							<Label Classes="icon" Content="&#xE97F;" />
+							<Label Content="BACKUP/RESTORE" />
 						</StackPanel>
 					</Button>
 					<Border IsVisible="{Binding IsBookCoverVisible}" Margin="10">

@@ -25,6 +25,9 @@
 		<DataTemplate DataType="vm:SearchViewModel">
 			<views:SearchView />			
 		</DataTemplate>
+		<DataTemplate DataType="vm:DataBackupViewModel">
+			<views:DataBackupView />
+		</DataTemplate>
 	</Application.DataTemplates>
 
 	<Application.Resources>

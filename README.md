@@ -96,7 +96,7 @@ The application will automatically create and initialize the SQLite database on 
 ### API Testing
 
 If you would like to test the API without running the Goweli app, navigate to Goweli/GoweliProxyAPI/Properties. Open the
-launchSettings.json file and change the launchBrowser entry under "profiles" from 'false' to 'true' and change the startup congif
+launchSettings.json file and change the launchBrowser entry under "profiles" from 'false' to 'true' and change the startup config
 to only launch GoweliProxyAPI. This will open the Swagger page when the GoweliProxyAPI project is started.
 
 ## 📱 Screenshots

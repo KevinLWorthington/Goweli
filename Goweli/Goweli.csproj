@@ -40,4 +40,10 @@
   <ItemGroup>
     <Folder Include="Services\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\SearchView.axaml.cs">
+      <DependentUpon>SearchView.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

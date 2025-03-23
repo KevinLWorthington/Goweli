@@ -22,6 +22,9 @@
 		<DataTemplate DataType="vm:HomeViewModel">
 			<views:HomeView />
 		</DataTemplate>
+		<DataTemplate DataType="vm:SearchViewModel">
+			<views:SearchView />			
+		</DataTemplate>
 	</Application.DataTemplates>
 
 	<Application.Resources>

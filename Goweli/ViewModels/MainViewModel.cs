@@ -64,6 +64,12 @@ public partial class MainViewModel : ViewModelBase
             ClearBookCover();
     }
 
+    [RelayCommand]
+    private void ShowSearchView()
+    {
+        CurrentViewModel = new SearchViewModel(this, _dbContext);
+    }
+
     // Method to load the book cover
     public async Task LoadBookCoverAsync(string coverUrl)
     {

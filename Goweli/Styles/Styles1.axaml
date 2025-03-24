@@ -26,6 +26,7 @@
 	</Style>
 	<!-- Sets the button formatting -->
 	<Style Selector="Button">
+		<Setter Property="FontFamily" Value="{DynamicResource ResourceKey=Akira}"></Setter>
 		<Setter Property="FontSize" Value="15"></Setter>
 		<Setter Property="Padding" Value="9,5.5,9.2,5.5"></Setter>
 		<Setter Property="Background" Value="#24424d"></Setter>

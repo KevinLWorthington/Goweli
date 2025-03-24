@@ -43,7 +43,7 @@
 			<!-- Left side navigation panel -->
 			<Grid Grid.Column="0" RowDefinitions="*, Auto" IsVisible="{Binding IsMenuVisible}">
 				<StackPanel Grid.Row="0" Spacing="12">
-					<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}"
+					<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}" HorizontalAlignment="Center"
 							ToolTip.Tip="Home">
 						<Image Source="/Assets/Images/Icon.png" Width="90" />
 					</Button>

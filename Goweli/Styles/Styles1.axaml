@@ -9,6 +9,9 @@
 	<Style Selector="TextBlock">
 		<Setter Property="FontFamily" Value="{DynamicResource ResourceKey=Akira}"></Setter>
 	</Style>
+	<Style Selector="CheckBox">
+<Setter Property="FontFamily" Value="{DynamicResource ResourceKey=Akira}"></Setter>
+</Style>
 	<!-- Sets the icon font for UI buttons -->
 	<Style Selector="Label.icon">
 		<Setter Property="FontFamily" Value="{DynamicResource ResourceKey=PhosphorFill}"></Setter>

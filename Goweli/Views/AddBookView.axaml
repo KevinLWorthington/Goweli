@@ -13,16 +13,16 @@
 			<StackPanel Grid.Column="0" Spacing="15" Margin="0,30,0,20">
 				<!-- Book information fields -->
 				<StackPanel>
-					<TextBox HorizontalAlignment="Center" Text="{Binding BookTitle}" Watermark="Enter book title"/>
+					<TextBox HorizontalAlignment="Center" Text="{Binding BookTitle}" Watermark="Enter book title" MinWidth="210"/>
 				</StackPanel>
 				<StackPanel>
-					<TextBox HorizontalAlignment="Center" Text="{Binding AuthorName}" Watermark="Enter author name"/>
+					<TextBox HorizontalAlignment="Center" Text="{Binding AuthorName}" Watermark="Enter author name" MinWidth="250"/>
 				</StackPanel>
 				<StackPanel>
-					<TextBox HorizontalAlignment="Center" Text="{Binding ISBN}" Watermark="Enter ISBN (Optional)"/>
+					<TextBox HorizontalAlignment="Center" Text="{Binding ISBN}" Watermark="Enter ISBN (Optional)" MinWidth="250"/>
 				</StackPanel>
 				<StackPanel>
-					<TextBox HorizontalAlignment="Center" Text="{Binding Synopsis}" Height="100" AcceptsReturn="True" TextWrapping="Wrap" Watermark="Enter book synopsis (Optional)"/>
+					<TextBox HorizontalAlignment="Center" Text="{Binding Synopsis}" Height="100" AcceptsReturn="True" TextWrapping="Wrap" Watermark="Enter book synopsis (Optional)" MinWidth="370"/>
 				</StackPanel>
 				<CheckBox HorizontalAlignment="Center" IsChecked="{Binding IsChecked}" Content="Have you read this book?"/>
 				<Button Command="{Binding SubmitCommand}" Content="Submit" HorizontalContentAlignment="Center" Width="150" HorizontalAlignment="Center" Margin="0,20,0,0"

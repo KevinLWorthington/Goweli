@@ -40,10 +40,10 @@
 					<Image Grid.Row="1" Source="{Binding PreviewCoverImage}" Stretch="Uniform" MaxHeight="300"/>
 
 					<StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0" Spacing="10">
-						<Button Command="{Binding AcceptCoverCommand}" HorizontalContentAlignment="Center" Content="Accept" Width="90"
+						<Button Command="{Binding AcceptCoverCommand}" HorizontalContentAlignment="Center" Content="Accept" Width="110"
 								ToolTip.Tip="Use this cover and add the book"/>
 
-						<Button Command="{Binding RejectCoverCommand}" HorizontalContentAlignment="Center" Content="Next" Width="90"
+						<Button Command="{Binding RejectCoverCommand}" HorizontalContentAlignment="Center" Content="Next" Width="110"
 								ToolTip.Tip="Try finding another cover"/>
 					</StackPanel>
 				</Grid>

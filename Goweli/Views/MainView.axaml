@@ -49,7 +49,7 @@
 			<!-- Left side navigation panel -->
 			<Grid Grid.Column="0" RowDefinitions="*, Auto" IsVisible="{Binding IsMenuVisible}">
 				<StackPanel Grid.Row="0" Spacing="12">
-					<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}"
+					<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}" HorizontalAlignment="Center"
 							ToolTip.Tip="Home">
 						<Image Source="/Assets/Images/Icon.png" Width="90" />
 					</Button>
@@ -78,8 +78,8 @@
 					<Button HorizontalAlignment="Stretch" Margin="10" Command="{Binding ShowDataBackupViewCommand}"
         ToolTip.Tip="Backup/Restore">
 						<StackPanel Orientation="Horizontal">
-							<Label Classes="icon" Content="&#xE97F;" />
-							<Label Content="BACKUP/RESTORE" />
+							<Label Classes="icon" Content="&#xEAF0;" />
+							<Label Content="BACKUP" />
 						</StackPanel>
 					</Button>
 					<Border IsVisible="{Binding IsBookCoverVisible}" Margin="10">

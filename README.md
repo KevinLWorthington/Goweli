@@ -9,6 +9,10 @@ It allows me to maintain a personal library by adding, viewing, editing, and del
 fetches book cover images from the Open Library API, stores book data in a SQLite database, and provides an
 intuitive interface for managing your reading collection.
 
+### ❓ Why the name?
+
+Goweli (go-way-lee) is the English spelling for the Cherokee word for [book](https://www.cherokeedictionary.net/first500).
+
 ## 🎏 Project Goals
 
 The goal of the project was to demonstrate a basic knowledge of C# and Object Oriented Programming.
@@ -83,10 +87,11 @@ dotnet build
 ```
 4. Make sure that the startup configuration is set to both Goweli.Browser and GoweliProxyAPI
 
-The commands may need to be run more than once before they work.
+The commands may need to be run more than once and a restart of the IDE may be required.
 It never hurts to run
 ```bash
 dotnet clean
+dotnet build
 ```
 
 ### Database Setup
@@ -146,7 +151,7 @@ to only launch GoweliProxyAPI. This will open the Swagger page when the GoweliPr
 - [AngelSix on Youtube](https://www.youtube.com/@AngelSix/) for the AvaloniaUI tutorial
 - [Code:You](https://code-you.org/) program for the opportunity to build this capstone project and the resources and guidance
 
-## AI and it's use in the project
+## 🤖 AI and it's use in the project
 
 The phrase "don't trust the AI" (Thanks, Chris!) was ever present in the development of this project. I found it both helpful and frustrating.
 AI was most helpful in finding and explaining errors that I just couldn't see. If I found myself stuck
@@ -161,7 +166,7 @@ Claude.ai was very helpful in creating this README.md file. You can link to your
 readme and give it the basic info you'd like to have. Then go through and edit/add the info you need. It really helps if you're not
 good at visual design, and I'm not at all.
 
-## What would I have done differently?
+## ♻️ What would I have done differently?
 
 I chose to build my project with AvaloniaUI. This was outside the recommendations of my mentors and the project requirements.
 I started by building an app that ran on the desktop and had about 75% of the functionality that I needed. From my reading,

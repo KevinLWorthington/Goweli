@@ -41,7 +41,11 @@
 			</Button>
 
 			<!-- Left side navigation panel -->
-			<Grid Grid.Column="0" RowDefinitions="*, Auto" IsVisible="{Binding IsMenuVisible}">
+		<Border Grid.Column="0"
+	BorderBrush="Gray"
+	BorderThickness="0,0,1,0"
+	IsVisible="{Binding IsMenuVisible}">
+			<Grid RowDefinitions="*, Auto">
 				<StackPanel Grid.Row="0" Spacing="12">
 					<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}" HorizontalAlignment="Center"
 							ToolTip.Tip="Home" Classes="transparent">
@@ -68,6 +72,7 @@
 					</Border>
 				</StackPanel>
 			</Grid>
+			</Border>
 
 		<!-- Main content area -->
 		<ContentControl Grid.Column="1" Content="{Binding CurrentViewModel}" />

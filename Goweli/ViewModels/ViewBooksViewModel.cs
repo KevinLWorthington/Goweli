@@ -45,9 +45,6 @@ namespace Goweli.ViewModels
         private bool _isEditing = false;
 
         [ObservableProperty]
-        private bool _isDeleting = false;
-
-        [ObservableProperty]
         private bool _isDeleteConfirmationVisible = false;
 
         private Book? _originalState;

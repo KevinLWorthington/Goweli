@@ -35,17 +35,17 @@
 					ToolTip.Tip="Show menu" Classes="transparent">
 				<Label Classes="menu" Content="&#xEA1E;" />
 			</Button>
-			<Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding IsMenuVisible}"
+			<!--<Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding IsMenuVisible}"
 					ToolTip.Tip="Hide menu" Classes="transparent">
 				<Label Classes="menu" Content="&#xEA1C;" />
-			</Button>
+			</Button>-->
 
 			<!-- Left side navigation panel -->
 		<Border Grid.Column="0"
-	BorderBrush="Gray"
-	BorderThickness="0,0,1,0"
-	IsVisible="{Binding IsMenuVisible}">
-			<Grid RowDefinitions="*, Auto">
+		BorderBrush="Gray"
+		BorderThickness="0,0,1,0"
+		IsVisible="{Binding IsMenuVisible}">
+			<Grid RowDefinitions="*, Auto" Background="{DynamicResource ResourceKey=SidebarBackground}">
 				<StackPanel Grid.Row="0" Spacing="12">
 					<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}" HorizontalAlignment="Center"
 							ToolTip.Tip="Home" Classes="transparent">

@@ -31,6 +31,13 @@
 			<GradientStop Color="#203A43" Offset="0.5" />
 			<GradientStop Color="#2C5364" Offset="1" />
 		</LinearGradientBrush>
+		<!-- Sidebar background color gradient -->
+		<LinearGradientBrush x:Key="SidebarBackground" StartPoint="50%,0%" EndPoint="50%,100%">
+			<GradientStop Color="#2C5364" Offset="0" />
+			<GradientStop Color="#203A43" Offset="0.5" />
+			<GradientStop Color="#0F2027" Offset="1" />
+						
+		</LinearGradientBrush>
 		<!-- Primary text font -->
 		<FontFamily x:Key="Akira">/Assets/Fonts/Akira Expanded Demo.otf#Akira Expanded</FontFamily>
 		<!-- Menu button icon font -->

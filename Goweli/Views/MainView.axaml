@@ -32,11 +32,11 @@
 		</Grid.ColumnDefinitions>
 <!-- Hide and show menu buttons -->
 			<Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding !IsMenuVisible}"
-					ToolTip.Tip="Show menu">
+					ToolTip.Tip="Show menu" Classes="transparent">
 				<Label Classes="menu" Content="&#xEA1E;" />
 			</Button>
 			<Button Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Bottom" Command="{Binding ToggleMenuCommand}" IsVisible="{Binding IsMenuVisible}"
-					ToolTip.Tip="Hide menu">
+					ToolTip.Tip="Hide menu" Classes="transparent">
 				<Label Classes="menu" Content="&#xEA1C;" />
 			</Button>
 
@@ -44,7 +44,7 @@
 			<Grid Grid.Column="0" RowDefinitions="*, Auto" IsVisible="{Binding IsMenuVisible}">
 				<StackPanel Grid.Row="0" Spacing="12">
 					<Button Background="#00FFFFFF" Command="{Binding ShowDefaultCommand}" HorizontalAlignment="Center"
-							ToolTip.Tip="Home">
+							ToolTip.Tip="Home" Classes="transparent">
 						<Image Source="/Assets/Images/Icon.png" Width="90" />
 					</Button>
 					<!-- Side menu buttons with command bindings -->

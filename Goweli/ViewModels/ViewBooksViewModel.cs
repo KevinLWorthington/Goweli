@@ -44,6 +44,12 @@ namespace Goweli.ViewModels
         [ObservableProperty]
         private bool _isEditing = false;
 
+        [ObservableProperty]
+        private bool _isDeleting = false;
+
+        [ObservableProperty]
+        private bool _isDeleteConfirmationVisible = false;
+
         private Book? _originalState;
 
         // Methods to handle property changes and update UI
@@ -78,7 +84,6 @@ namespace Goweli.ViewModels
         {
             try
             {
-
                 Task.Run(async () =>
                 {
                     try
@@ -112,7 +117,7 @@ namespace Goweli.ViewModels
                 StatusMessage = "Error loading books. Using sample data instead.";
                 LoadSampleBooks();
             }
-            
+
             // If no books have been entered, call method to load sample books
             if (Books.Count == 0)
             {
@@ -125,38 +130,38 @@ namespace Goweli.ViewModels
         private void LoadSampleBooks()
         {
             var sampleBooks = new ObservableCollection<Book>
-    {
-        new Book
-        {
-            Id = 1,
-            BookTitle = "The Great Gatsby",
-            AuthorName = "F. Scott Fitzgerald",
-            ISBN = "9780743273565",
-            IsChecked = true,
-            Synopsis = "A story of wealth, love, and the American Dream in the 1920s.",
-            CoverUrl = "https://covers.openlibrary.org/b/olid/OL22570129M-M.jpg"
-        },
-        new Book
-        {
-            Id = 2,
-            BookTitle = "To Kill a Mockingbird",
-            AuthorName = "Harper Lee",
-            ISBN = "9780061120084",
-            IsChecked = true,
-            Synopsis = "A story about racial injustice and moral growth in the American South.",
-            CoverUrl = "https://covers.openlibrary.org/b/olid/OL37027359M-M.jpg"
-        },
-        new Book
-        {
-            Id = 3,
-            BookTitle = "1984",
-            AuthorName = "George Orwell",
-            ISBN = "9780451524935",
-            IsChecked = false,
-            Synopsis = "A dystopian novel about totalitarianism, surveillance, and thought control.",
-            CoverUrl = "https://covers.openlibrary.org/b/olid/OL21733390M-M.jpg"
-        }
-    };
+                {
+                    new Book
+                    {
+                        Id = 1,
+                        BookTitle = "The Great Gatsby",
+                        AuthorName = "F. Scott Fitzgerald",
+                        ISBN = "9780743273565",
+                        IsChecked = true,
+                        Synopsis = "A story of wealth, love, and the American Dream in the 1920s.",
+                        CoverUrl = "https://covers.openlibrary.org/b/olid/OL22570129M-M.jpg"
+                    },
+                    new Book
+                    {
+                        Id = 2,
+                        BookTitle = "To Kill a Mockingbird",
+                        AuthorName = "Harper Lee",
+                        ISBN = "9780061120084",
+                        IsChecked = true,
+                        Synopsis = "A story about racial injustice and moral growth in the American South.",
+                        CoverUrl = "https://covers.openlibrary.org/b/olid/OL37027359M-M.jpg"
+                    },
+                    new Book
+                    {
+                        Id = 3,
+                        BookTitle = "1984",
+                        AuthorName = "George Orwell",
+                        ISBN = "9780451524935",
+                        IsChecked = false,
+                        Synopsis = "A dystopian novel about totalitarianism, surveillance, and thought control.",
+                        CoverUrl = "https://covers.openlibrary.org/b/olid/OL21733390M-M.jpg"
+                    }
+                };
             // Load the sample books into the database if none exist (can be deleted from the db later)
             if (_dbContext.Books.Count() == 0)
             {
@@ -170,8 +175,29 @@ namespace Goweli.ViewModels
             Books = new ObservableCollection<Book>(sampleBooks);
         }
 
-        // Method to delete a book
+        // Method to show delete confirmation dialog
         [RelayCommand]
+        private void ShowDeleteConfirmation()
+        {
+            IsDeleteConfirmationVisible = true;
+        }
+
+        // Method to confirm delete
+        [RelayCommand]
+        private async Task ConfirmDelete()
+        {
+            IsDeleteConfirmationVisible = false;
+            await DeleteBook();
+        }
+
+        // Method to cancel delete
+        [RelayCommand]
+        private void CancelDelete()
+        {
+            IsDeleteConfirmationVisible = false;
+        }
+
+        // Method to delete a book
         private async Task DeleteBook()
         {
             try
@@ -194,7 +220,6 @@ namespace Goweli.ViewModels
                 _mainViewModel.ClearBookCover();
 
                 // Remove the user selected book from the database and update the UI
-                // Will need confirmation implementation eventually
                 try
                 {
                     _dbContext.Books.Remove(bookToRemove);
@@ -209,7 +234,6 @@ namespace Goweli.ViewModels
                     else
                     {
                         StatusMessage = "Operation timed out, updating UI only";
-
                     }
 
                     Books.Remove(bookToRemove);
@@ -303,7 +327,7 @@ namespace Goweli.ViewModels
                 }
 
                 SelectedBook = EditingBook;
-                
+
                 // Load the book being edited from the database
                 try
                 {
@@ -360,19 +384,19 @@ namespace Goweli.ViewModels
         private void CancelEdit()
         {
             // Reset variables and UI states
-                EditingBook = null;
-                _originalState = null;
-                IsEditing = false;
-                StatusMessage = "Edit canceled";
+            EditingBook = null;
+            _originalState = null;
+            IsEditing = false;
+            StatusMessage = "Edit canceled";
 
-                Task.Run(async () =>
+            Task.Run(async () =>
+            {
+                await Task.Delay(2000);
+                await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    await Task.Delay(2000);
-                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        StatusMessage = string.Empty;
-                    });
+                    StatusMessage = string.Empty;
                 });
+            });
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Goweli.ViewModels
 
         // Observable properties for data binding
         [ObservableProperty]
-        private ObservableCollection<Book> _books = new();
+        private ObservableCollection<Book> _books = [];
 
         [ObservableProperty]
         private Book? _selectedBook;
@@ -105,7 +105,7 @@ namespace Goweli.ViewModels
             try
             {
                 var books = await _dbContext.Books.ToListAsync();
-                Books = new ObservableCollection<Book>(books);
+                Books = [.. books];
             }
 
             // If an error occurs, call method to load sample books
@@ -128,8 +128,7 @@ namespace Goweli.ViewModels
         {
             var sampleBooks = new ObservableCollection<Book>
             {
-                new Book
-                {
+                new() {
                     Id = 1,
                     BookTitle = "The Great Gatsby",
                     AuthorName = "F. Scott Fitzgerald",
@@ -138,8 +137,7 @@ namespace Goweli.ViewModels
                     Synopsis = "A story of wealth, love, and the American Dream in the 1920s.",
                     CoverUrl = "https://covers.openlibrary.org/b/olid/OL22570129M-M.jpg"
                 },
-                new Book
-                {
+                new() {
                     Id = 2,
                     BookTitle = "To Kill a Mockingbird",
                     AuthorName = "Harper Lee",
@@ -148,8 +146,7 @@ namespace Goweli.ViewModels
                     Synopsis = "A story about racial injustice and moral growth in the American South.",
                     CoverUrl = "https://covers.openlibrary.org/b/olid/OL37027359M-M.jpg"
                 },
-                new Book
-                {
+                new() {
                     Id = 3,
                     BookTitle = "1984",
                     AuthorName = "George Orwell",
@@ -169,7 +166,7 @@ namespace Goweli.ViewModels
                 _dbContext.SaveChanges();
             }
 
-            Books = new ObservableCollection<Book>(sampleBooks);
+            Books = [.. sampleBooks];
         }
 
         // Method to show delete confirmation dialog

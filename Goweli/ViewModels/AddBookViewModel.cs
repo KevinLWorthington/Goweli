@@ -13,21 +13,21 @@ using System.Net.Http.Json;
 
 namespace Goweli.ViewModels
 {
-    public partial class AddBookViewModel : ViewModelBase
+    public partial class AddBookViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext, HttpClient? apiClient = null) : ViewModelBase
     {
         // Dependency injections fields
-        private readonly MainViewModel _mainViewModel;
-        private readonly GoweliDbContext _dbContext;
-        private readonly HttpClient _apiClient;
+        private readonly MainViewModel _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
+        private readonly GoweliDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        private readonly HttpClient _apiClient = apiClient ?? new HttpClient();
         private string? _validatedCoverUrl;
         private int _currentCoverIndex = 0; // Index of book covers to be cycled through (should start at 0)
-        private List<CoverSource> _coverSources = new List<CoverSource>();
+        private List<CoverSource> _coverSources = [];
         private TaskCompletionSource<bool>? _userDecisionTcs;
 
         // Base URL for API. Replace with actual URL in production
         private readonly string _apiBaseUrl = "http://localhost:5128/api/Proxy";
 
-        public static ObservableCollection<Book> Books { get; } = new ObservableCollection<Book>();
+        public static ObservableCollection<Book> Books { get; } = [];
 
         // Properties to be called from the view
         [ObservableProperty]
@@ -60,16 +60,6 @@ namespace Goweli.ViewModels
         [ObservableProperty]
         private bool _isProcessingCovers;
 
-        // Constructor for dependency injection
-        public AddBookViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext, HttpClient? apiClient = null)
-        {
-            _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-
-            // Create a new HttpClient if not injected
-            _apiClient = apiClient ?? new HttpClient();
-        }
-
         // Method to get book covers from the API
         private async Task<string?> GetBookCoverUrlAsync(string title)
         {
@@ -89,7 +79,7 @@ namespace Goweli.ViewModels
                 }
 
                 // Get a list of covers to be loaded for the user to select from
-                _coverSources = await response.Content.ReadFromJsonAsync<List<CoverSource>>() ?? new List<CoverSource>();
+                _coverSources = await response.Content.ReadFromJsonAsync<List<CoverSource>>() ?? [];
 
                 if (_coverSources.Count == 0) // If there's no covers available, notify the user and set the cover to null
                 {

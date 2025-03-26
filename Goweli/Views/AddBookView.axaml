@@ -6,11 +6,11 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Goweli.Views.AddBookView"
              x:DataType="vm:AddBookViewModel">
-	<Grid RowDefinitions="Auto" Margin="20" VerticalAlignment="Center">
+	<Grid RowDefinitions="Auto,*,Auto" Margin="20" VerticalAlignment="Center">
 		<TextBlock HorizontalAlignment="Center" Grid.Row="0" Text="Add New Book" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
 		<Grid Grid.Row="1" ColumnDefinitions="*,Auto">
 
-			<StackPanel Grid.Column="0" Spacing="15" Margin="0,30,0,20">
+			<StackPanel Grid.Column="0" Spacing="15" Margin="0,0,0,20">
 				<!-- Book information fields -->
 				<StackPanel>
 					<TextBox HorizontalAlignment="Center" Text="{Binding BookTitle}" Watermark="Enter book title" MinWidth="210"/>

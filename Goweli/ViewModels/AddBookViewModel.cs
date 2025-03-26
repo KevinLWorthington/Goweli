@@ -61,7 +61,7 @@ namespace Goweli.ViewModels
         private bool _isProcessingCovers;
 
         // Constructor for dependency injection
-        public AddBookViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext, HttpClient apiClient = null)
+        public AddBookViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext, HttpClient? apiClient = null)
         {
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
@@ -130,7 +130,7 @@ namespace Goweli.ViewModels
             {
                 IsProcessingCovers = true; // Bound in the view to update the UI
                 var coverSource = _coverSources[_currentCoverIndex];
-                string coverUrl = coverSource.Url;
+                string? coverUrl = coverSource.Url;
 
                 // Validate the cover URL using the API
                 var validateUrl = $"{_apiBaseUrl}/validateCover?coverUrl={Uri.EscapeDataString(coverUrl)}";

@@ -49,30 +49,27 @@ namespace Goweli
                 base.OnFrameworkInitializationCompleted();
         }
 
-        private void RegisterServices(IServiceCollection services)
+        private static void RegisterServices(IServiceCollection services)
         {
-                // Register database services
-                services.AddSingleton<IDatabaseService, DatabaseService>();
+            // Register database services
+            services.AddSingleton<IDatabaseService, DatabaseService>();
 
-                // Register GoweliDbContext
-                services.AddDbContext<GoweliDbContext>(options =>
-                    options.UseSqlite("Data Source=file:goweli.db"));
-
+            // Register GoweliDbContext
+            services.AddDbContext<GoweliDbContext>(options =>
+                options.UseSqlite("Data Source=file:goweli.db"));
         }
 
         private async void InitializeDatabaseAsync()
         {
+            var dbContext = ServiceProvider?.GetRequiredService<GoweliDbContext>();
+            if (dbContext != null)
+            {
+                // This will create the database if it doesn't exist
+                await dbContext.Database.EnsureCreatedAsync();
 
-                var dbContext = ServiceProvider?.GetRequiredService<GoweliDbContext>();
-                if (dbContext != null)
-                {
-                    // This will create the database if it doesn't exist
-                    bool created = await dbContext.Database.EnsureCreatedAsync();
-
-                    // Verify we can access the Books table
-                    
-                        var count = await dbContext.Books.CountAsync();                    
-                }            
+                // Verify we can access the Books table
+                await dbContext.Books.CountAsync();
+            }
         }
     }
 }

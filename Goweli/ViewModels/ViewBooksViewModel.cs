@@ -20,7 +20,7 @@ namespace Goweli.ViewModels
         public ViewBooksViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-            _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(MainViewModel));
+            _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
 
             LoadBooks();
         }
@@ -116,7 +116,7 @@ namespace Goweli.ViewModels
             }
 
             // If no books have been entered, call method to load sample books
-            if (Books.Count == 0)
+            if (!Books.Any())
             {
                 StatusMessage = "No books found. Using sample data instead.";
                 LoadSampleBooks();
@@ -127,40 +127,40 @@ namespace Goweli.ViewModels
         private void LoadSampleBooks()
         {
             var sampleBooks = new ObservableCollection<Book>
+            {
+                new Book
                 {
-                    new Book
-                    {
-                        Id = 1,
-                        BookTitle = "The Great Gatsby",
-                        AuthorName = "F. Scott Fitzgerald",
-                        ISBN = "9780743273565",
-                        IsChecked = true,
-                        Synopsis = "A story of wealth, love, and the American Dream in the 1920s.",
-                        CoverUrl = "https://covers.openlibrary.org/b/olid/OL22570129M-M.jpg"
-                    },
-                    new Book
-                    {
-                        Id = 2,
-                        BookTitle = "To Kill a Mockingbird",
-                        AuthorName = "Harper Lee",
-                        ISBN = "9780061120084",
-                        IsChecked = true,
-                        Synopsis = "A story about racial injustice and moral growth in the American South.",
-                        CoverUrl = "https://covers.openlibrary.org/b/olid/OL37027359M-M.jpg"
-                    },
-                    new Book
-                    {
-                        Id = 3,
-                        BookTitle = "1984",
-                        AuthorName = "George Orwell",
-                        ISBN = "9780451524935",
-                        IsChecked = false,
-                        Synopsis = "A dystopian novel about totalitarianism, surveillance, and thought control.",
-                        CoverUrl = "https://covers.openlibrary.org/b/olid/OL21733390M-M.jpg"
-                    }
-                };
+                    Id = 1,
+                    BookTitle = "The Great Gatsby",
+                    AuthorName = "F. Scott Fitzgerald",
+                    ISBN = "9780743273565",
+                    IsChecked = true,
+                    Synopsis = "A story of wealth, love, and the American Dream in the 1920s.",
+                    CoverUrl = "https://covers.openlibrary.org/b/olid/OL22570129M-M.jpg"
+                },
+                new Book
+                {
+                    Id = 2,
+                    BookTitle = "To Kill a Mockingbird",
+                    AuthorName = "Harper Lee",
+                    ISBN = "9780061120084",
+                    IsChecked = true,
+                    Synopsis = "A story about racial injustice and moral growth in the American South.",
+                    CoverUrl = "https://covers.openlibrary.org/b/olid/OL37027359M-M.jpg"
+                },
+                new Book
+                {
+                    Id = 3,
+                    BookTitle = "1984",
+                    AuthorName = "George Orwell",
+                    ISBN = "9780451524935",
+                    IsChecked = false,
+                    Synopsis = "A dystopian novel about totalitarianism, surveillance, and thought control.",
+                    CoverUrl = "https://covers.openlibrary.org/b/olid/OL21733390M-M.jpg"
+                }
+            };
             // Load the sample books into the database if none exist (can be deleted from the db later)
-            if (_dbContext.Books.Count() == 0)
+            if (!_dbContext.Books.Any())
             {
                 foreach (var book in sampleBooks)
                 {

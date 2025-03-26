@@ -104,6 +104,11 @@ If you would like to test the API without running the Goweli app, navigate to Go
 launchSettings.json file and change the launchBrowser entry under "profiles" from 'false' to 'true' and change the startup config
 to only launch GoweliProxyAPI. This will open the Swagger page when the GoweliProxyAPI project is started.
 
+### Open Library Status
+
+Occasionally, the Open Library and Archive.org services go down. If the cover images are not loading, this could be why. You can check the status
+of the Open Libary service [here](https://openlibrary.org/status).
+
 ## 📱 Screenshots
 
 ![Main Screen](https://github.com/KevinLWorthington/SDProjectPlan/blob/main/Assets/GoweliMain.png)

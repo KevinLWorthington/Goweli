@@ -31,6 +31,7 @@ The goal of the project was to demonstrate a basic knowledge of C# and Object Or
 
 1. **API Integration** ✓
    - Uses a proxy API to integrate with the Open Library API to fetch book cover images
+   - API handles database management so changes can be saved
 
 2. **Database Interaction (SQLite)** ✓
    - Implements Entity Framework Core with SQLite database

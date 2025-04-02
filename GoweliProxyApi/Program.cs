@@ -1,7 +1,4 @@
 using Swashbuckle.AspNetCore.SwaggerUI;
-using GoweliProxyApi.Data;
-using Microsoft.EntityFrameworkCore;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,13 +8,6 @@ builder.Services.AddControllers();
 // Register the Swagger generator
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-var dbPath = Path.Combine(builder.Environment.ContentRootPath, "goweli.db");
-
-// Register the database context
-builder.Services.AddDbContext<GoweliDbContext>(options =>
-    options.UseSqlite($"Data Source={dbPath}"));
-
 
 // Configure the HTTP client
 builder.Services.AddHttpClient("OpenLibraryClient", client =>
@@ -53,13 +43,6 @@ else
 {
     app.UseExceptionHandler("/error");
     app.UseHsts();
-}
-
-// Ensure database is created
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<GoweliDbContext>();
-    dbContext.Database.EnsureCreated();
 }
 
 // Use CORS before routing

@@ -1,11 +1,10 @@
 ﻿using Avalonia.Media.Imaging;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Goweli.Services;
+using Goweli.Data;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Goweli.ViewModels;
 
@@ -23,20 +22,20 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool _isMenuVisible;
-
+    
     // Fields for dependency injection
     private readonly HttpClient _httpClient;
-    private readonly IDatabaseService _databaseService;
+    private readonly GoweliDbContext _dbContext;
     private readonly IServiceProvider _serviceProvider;
 
     // Constructor for dependency injection
-    public MainViewModel(IServiceProvider serviceProvider)
+    public MainViewModel(GoweliDbContext dbContext, IServiceProvider serviceProvider)
     {
         try
         {
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _httpClient = serviceProvider.GetRequiredService<HttpClient>(); // Get from DI
-            _databaseService = serviceProvider.GetRequiredService<IDatabaseService>(); // Get from DI
+            _httpClient = new HttpClient(); // Used to load image from URL stored in the database
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext)); // Load the database
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider)); 
             IsBookCoverVisible = false; // Start with cover hidden
             ShowDefault();
         }
@@ -49,13 +48,13 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     private void ShowAddBookView()
     {
-        CurrentViewModel = new AddBookViewModel(this, _databaseService, _httpClient);        
+        CurrentViewModel = new AddBookViewModel(this, _dbContext);        
     }
 
     [RelayCommand]
     private void ShowViewBooks()
     {
-            CurrentViewModel = new ViewBooksViewModel(this, _databaseService);
+            CurrentViewModel = new ViewBooksViewModel(this, _dbContext);
     }
 
     [RelayCommand]

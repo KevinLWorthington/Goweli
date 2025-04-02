@@ -1,47 +1,49 @@
-using Goweli.Data;
-using Goweli.Models;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Goweli.Models;
 
 namespace Goweli.Services
 {
-    // DatabaseService class implements IDatabaseService interface
     public class DatabaseService : IDatabaseService
     {
-        // Dependency injection
-        private readonly GoweliDbContext _dbContext;
+        private readonly HttpClient _httpClient;
+        private readonly string _apiBaseUrl = "http://localhost:5128/api/Books";
 
-        // Constructor with dependency injection
-        public DatabaseService(GoweliDbContext dbContext)
+        public DatabaseService(HttpClient httpClient)
         {
-            _dbContext = dbContext;
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
 
-        // Initializes the database and ensures it is created
         public async Task InitializeAsync()
         {
-            await _dbContext.Database.EnsureCreatedAsync();
+            await Task.CompletedTask;
         }
 
-        // Retrieves all books from the database
         public async Task<List<Book>> GetBooksAsync()
         {
-            return await _dbContext.Books.ToListAsync();
+            try
+            {
+                var books = await _httpClient.GetFromJsonAsync<List<Book>>(_apiBaseUrl);
+                return books ?? new List<Book>();
+            }
+            catch (Exception)
+            {
+                // Return empty list on error
+                return new List<Book>();
+            }
         }
 
-        // Adds a book to the database
         public async Task AddBookAsync(Book book)
         {
-            _dbContext.Books.Add(book);
-            await _dbContext.SaveChangesAsync();
+            await _httpClient.PostAsJsonAsync(_apiBaseUrl, book);
         }
 
-        // Deletes a book from the database
         public async Task DeleteBookAsync(Book book)
         {
-            _dbContext.Books.Remove(book);
-            await _dbContext.SaveChangesAsync();
+            await _httpClient.DeleteAsync($"{_apiBaseUrl}/{book.Id}");
         }
     }
 }

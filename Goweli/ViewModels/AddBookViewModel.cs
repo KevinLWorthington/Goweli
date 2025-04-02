@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Goweli.Models;
-using Goweli.Data;
 using System;
 using System.Threading.Tasks;
 using System.Net.Http;
@@ -10,14 +9,15 @@ using System.IO;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Net.Http.Json;
+using Goweli.Services;
 
 namespace Goweli.ViewModels
 {
-    public partial class AddBookViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext, HttpClient? apiClient = null) : ViewModelBase
+    public partial class AddBookViewModel(MainViewModel mainViewModel, IDatabaseService databaseService, HttpClient? apiClient = null) : ViewModelBase
     {
         // Dependency injections fields
         private readonly MainViewModel _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
-        private readonly GoweliDbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+        private readonly IDatabaseService _databaseService = databaseService ?? throw new ArgumentNullException(nameof(databaseService));
         private readonly HttpClient _apiClient = apiClient ?? new HttpClient();
         private string? _validatedCoverUrl;
         private int _currentCoverIndex = 0; // Index of book covers to be cycled through (should start at 0)
@@ -197,8 +197,7 @@ namespace Goweli.ViewModels
                     CoverUrl = coverUrl  // This will be the URL the user selected or null
                 };
 
-                _dbContext.Books.Add(newBook);
-                await _dbContext.SaveChangesAsync();
+                await _databaseService.AddBookAsync(newBook);
 
                 StatusMessage = "Book added successfully!";
                 await Task.Delay(2000);

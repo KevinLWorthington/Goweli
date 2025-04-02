@@ -4,10 +4,9 @@ using Avalonia.Markup.Xaml;
 using Goweli.ViewModels;
 using Goweli.Views;
 using Goweli.Services;
-using Goweli.Data;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using System;
+using System.Net.Http;
 
 namespace Goweli
 {
@@ -35,40 +34,42 @@ namespace Goweli
                 {
                     desktop.MainWindow = new MainWindow
                     {
-                        DataContext = new MainViewModel(ServiceProvider.GetRequiredService<GoweliDbContext>(), ServiceProvider)
+                        DataContext = new MainViewModel(ServiceProvider)
                     };
                 }
                 else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
                 {
-                    var mainView = new MainView(ServiceProvider);
-                    var mainViewModel = new MainViewModel(ServiceProvider.GetRequiredService<GoweliDbContext>(), ServiceProvider);
-                    mainView.DataContext = mainViewModel;
-                    singleViewPlatform.MainView = mainView;
-                }
+                var mainView = new MainView(ServiceProvider);
+                var mainViewModel = new MainViewModel(ServiceProvider);
+                mainView.DataContext = mainViewModel;
+                singleViewPlatform.MainView = mainView;
+            }
 
                 base.OnFrameworkInitializationCompleted();
         }
 
         private static void RegisterServices(IServiceCollection services)
         {
-            // Register database services
-            services.AddSingleton<IDatabaseService, DatabaseService>();
 
-            // Register GoweliDbContext
-            services.AddDbContext<GoweliDbContext>(options =>
-                options.UseSqlite("Data Source=file:goweli.db"));
+            services.AddSingleton(sp =>
+            {
+                var httpClient = new HttpClient
+                {
+                    BaseAddress = new Uri("http://localhost:5128/")
+                };
+                return httpClient;
+            });
+                // Register database services
+                services.AddSingleton<IDatabaseService, DatabaseService>();
+
         }
 
         private async void InitializeDatabaseAsync()
         {
-            var dbContext = ServiceProvider?.GetRequiredService<GoweliDbContext>();
-            if (dbContext != null)
+            var databaseService = ServiceProvider?.GetRequiredService<IDatabaseService>();
+            if (databaseService != null)
             {
-                // This will create the database if it doesn't exist
-                await dbContext.Database.EnsureCreatedAsync();
-
-                // Verify we can access the Books table
-                await dbContext.Books.CountAsync();
+                _ = databaseService.InitializeAsync();
             }
         }
     }

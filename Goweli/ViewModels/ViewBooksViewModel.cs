@@ -1,7 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Goweli.Data;
 using Goweli.Models;
-using Goweli.Services;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,12 +14,12 @@ namespace Goweli.ViewModels
     {
         // Private fields for dependency injection
         private readonly MainViewModel _mainViewModel;
-        private readonly IDatabaseService _databaseService;
+        private readonly GoweliDbContext _dbContext;
 
         // Constructor for dependency injection
-        public ViewBooksViewModel(MainViewModel mainViewModel, IDatabaseService databaseService)
+        public ViewBooksViewModel(MainViewModel mainViewModel, GoweliDbContext dbContext)
         {
-            _databaseService = databaseService ?? throw new ArgumentNullException(nameof(databaseService));
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             _mainViewModel = mainViewModel ?? throw new ArgumentNullException(nameof(mainViewModel));
 
             LoadBooks();
@@ -103,8 +104,8 @@ namespace Goweli.ViewModels
         {
             try
             {
-                var books = await _databaseService.GetBooksAsync();
-                Books = new ObservableCollection<Book>(books);
+                var books = await _dbContext.Books.ToListAsync();
+                Books = [.. books];
             }
 
             // If an error occurs, call method to load sample books
@@ -156,12 +157,16 @@ namespace Goweli.ViewModels
                 }
             };
             // Load the sample books into the database if none exist (can be deleted from the db later)
-            foreach (var book in sampleBooks)
+            if (!_dbContext.Books.Any())
             {
-                _databaseService.AddBookAsync(book).GetAwaiter().GetResult();
+                foreach (var book in sampleBooks)
+                {
+                    _dbContext.Books.Add(book);
+                }
+                _dbContext.SaveChanges();
             }
 
-            Books = sampleBooks;
+            Books = [.. sampleBooks];
         }
 
         // Method to show delete confirmation dialog
@@ -199,17 +204,33 @@ namespace Goweli.ViewModels
                     StatusMessage = string.Empty;
                     return;
                 }
-
+                // Update UI to show the selected book is being deleted
                 StatusMessage = $"Deleting '{SelectedBook.BookTitle}'";
+
                 var bookToRemove = SelectedBook;
+
                 SelectedBook = null;
+
                 _mainViewModel.ClearBookCover();
 
+                // Remove the user selected book from the database and update the UI
                 try
                 {
-                    await _databaseService.DeleteBookAsync(bookToRemove);
+                    _dbContext.Books.Remove(bookToRemove);
+
+                    var saveTask = _dbContext.SaveChangesAsync();
+                    var completedTask = await Task.WhenAny(saveTask, Task.Delay(5000));
+
+                    if (completedTask == saveTask)
+                    {
+                        StatusMessage = $"'{bookToRemove.BookTitle} deleted";
+                    }
+                    else
+                    {
+                        StatusMessage = "Operation timed out, updating UI only";
+                    }
+
                     Books.Remove(bookToRemove);
-                    StatusMessage = $"'{bookToRemove.BookTitle} deleted";
                 }
                 catch (Exception ex)
                 {
@@ -301,22 +322,44 @@ namespace Goweli.ViewModels
 
                 SelectedBook = EditingBook;
 
-                // Update the book using DatabaseService
+                // Load the book being edited from the database
                 try
                 {
-                    // First delete the old book
-                    await _databaseService.DeleteBookAsync(_originalState);
+                    var entity = await _dbContext.Books.FindAsync(EditingBook.Id);
+                    if (entity != null)
+                    {
+                        entity.BookTitle = EditingBook.BookTitle;
+                        entity.AuthorName = EditingBook.AuthorName;
+                        entity.ISBN = EditingBook.ISBN;
+                        entity.IsChecked = EditingBook.IsChecked;
+                        entity.Synopsis = EditingBook.Synopsis;
+                        entity.CoverUrl = EditingBook.CoverUrl;
 
-                    // Then add the updated book
-                    await _databaseService.AddBookAsync(EditingBook);
+                        // Save the changes to the database
+                        var saveTask = _dbContext.SaveChangesAsync();
+                        var completedTask = await Task.WhenAny(saveTask, Task.Delay(5000));
 
-                    StatusMessage = "Changes saved successfully";
+                        // Notify user of success or failure
+                        if (completedTask == saveTask)
+                        {
+                            StatusMessage = "Changes saved successfully";
+                        }
+                        else
+                        {
+                            StatusMessage = "Database operation timed out";
+                        }
+                    }
+                    else
+                    {
+                        StatusMessage = "Book not found in database, but UI updated";
+                    }
                 }
                 catch (Exception)
                 {
                     StatusMessage = "Database error";
                 }
 
+                // Update UI and make set 
                 IsEditing = false;
                 EditingBook = null;
                 _originalState = null;

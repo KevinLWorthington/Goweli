@@ -1,6 +1,8 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Goweli.Data;
 using Goweli.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace Goweli.Views
@@ -17,7 +19,7 @@ namespace Goweli.Views
             // Ensure DataContext is set
             if (Design.IsDesignMode == false && DataContext == null)
             {
-                DataContext = new MainViewModel(_serviceProvider);
+                DataContext = new MainViewModel(_serviceProvider.GetRequiredService<GoweliDbContext>(), _serviceProvider);
             }
         }
 
